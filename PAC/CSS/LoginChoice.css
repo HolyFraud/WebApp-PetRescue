@@ -1,0 +1,93 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    background-image: url(../Image/background-dog2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+section {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../Image/background-dog2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.innerleft {
+    width: 30%;
+    top: 15%;
+    height: 70%;
+    position: absolute;
+    left: 10%;
+    text-align: center;
+    margin: auto;
+    background-color: #12a312;
+    border-radius: 100%;
+}
+
+.innerright {
+    width: 30%;
+    top: 15%;
+    height: 70%;
+    position: absolute;
+    right: 10%;
+    text-align: center;
+    margin: auto;
+    background-color: #12a312;
+    border-radius: 100%;
+}
+
+.innerleft a {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: relative;
+    top: 40%;
+    text-decoration: none;
+    color: white;
+    font-size: 1.5vw;
+}
+
+.innerleft:hover {
+    background-color: #3e8e41;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2)
+}
+
+.innerright a {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: relative;
+    top: 40%;
+    text-decoration: none;
+    color: white;
+    font-size: 1.5vw;
+}
+
+.innerright:hover {
+    background-color: #3e8e41;
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2)
+}
+
+.containerlogin {
+    width: 25vw;
+    height: 23vh;
+    background-size: cover;
+    background: rgba(255, 255, 255, 0.3);
+    position: relative;
+    border-radius: 20%;
+}
