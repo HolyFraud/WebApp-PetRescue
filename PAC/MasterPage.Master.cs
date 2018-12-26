@@ -33,7 +33,7 @@ namespace PAC.View.Page
         protected void lbAccountInfo_Click(object sender, EventArgs e)
         {
             
-            Response.Redirect("/Members/ManageMyAccount.aspx");
+            Response.Redirect("/Members/MemberHome.aspx");
         }
 
         protected void lbLogout_Click(object sender, EventArgs e)

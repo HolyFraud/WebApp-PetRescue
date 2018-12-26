@@ -43,13 +43,16 @@
     <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>"
         SelectCommand="SELECT AdoptionList.AdoptionListID, CONCAT(MemberList.FirstName, ' ', MemberList.LastName) AS Name, AnimalTypeList.AnimalType, AnimalList.Age, AnimalList.Sex, AnimalList.Color, AnimalList.DOB, AnimalList.AdoptionFee FROM AdoptionList INNER JOIN AnimalList ON AdoptionList.AnimalListID = AnimalList.AnimalListID INNER JOIN MemberList ON AdoptionList.MemberListID = MemberList.MemberListID INNER JOIN AnimalTypeList ON AnimalList.AnimalTypeListID = AnimalTypeList.AnimalTypeListID WHERE (AdoptionList.AdoptionListID = @AdoptionListID)">
         <SelectParameters>
-            <asp:ControlParameter ControlID="gvAdoptionlist" DefaultValue="" Name="AdoptionListID" PropertyName="SelectedValue" />
+            <asp:SessionParameter DefaultValue="" Name="AdoptionListID" SessionField="CurrentAdoptionListID" />
         </SelectParameters>
     </asp:SqlDataSource>
 
-    <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" SelectCommand="SELECT QuestionResponseList.QuestionResponseListID, QuestionList.QuestionText, QuestionResponseList.ResponseValue, QuestionTypeList.QuestionType FROM QuestionResponseList INNER JOIN QuestionList ON QuestionResponseList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTypeList ON QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID INNER JOIN AdoptionList ON QuestionResponseList.AdoptionListID = AdoptionList.AdoptionListID WHERE (AdoptionList.AdoptionListID = @AdoptionListID)" UpdateCommand="UPDATE QuestionResponseList SET ResponseValue = @ResponseValue FROM QuestionResponseList INNER JOIN QuestionList ON QuestionResponseList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTypeList ON QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE (QuestionResponseList.QuestionResponseListID = @QuestionResponseListID)">
+    <asp:SqlDataSource ID="SqlDataSource3" runat="server" 
+        ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+        SelectCommand="SELECT QuestionListID, QuestionText, STUFF((SELECT ' ' + ResponseValue FROM QuestionResponseList WHERE (QuestionList.QuestionListID = QuestionListID) AND (AdoptionListID = @AdoptionListID) FOR XML PATH('')), 1, 1, '') AS Answer FROM QuestionList" 
+        UpdateCommand="UPDATE QuestionResponseList SET ResponseValue = @ResponseValue FROM QuestionResponseList INNER JOIN QuestionList ON QuestionResponseList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTypeList ON QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE (QuestionResponseList.QuestionResponseListID = @QuestionResponseListID)">
         <SelectParameters>
-            <asp:ControlParameter ControlID="GVAdoptionlist" Name="AdoptionListID" PropertyName="SelectedValue" />
+            <asp:SessionParameter Name="AdoptionListID" SessionField="CurrentAdoptionListID" />
         </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="ResponseValue" />
@@ -58,7 +61,17 @@
     </asp:SqlDataSource>
 
 
-    <asp:GridView ID="GVAdoptionlist" runat="server" AllowPaging="True" AutoGenerateColumns="False" DataSourceID="SqlDataSource1" AllowSorting="True" DataKeyNames="AdoptionListID">
+        <asp:SqlDataSource ID="SqlDataSource4" runat="server" 
+            ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+            SelectCommand=""></asp:SqlDataSource>
+
+
+    <asp:GridView ID="GVAdoptionlist" runat="server" 
+        AllowPaging="True"
+        AutoGenerateColumns="False" 
+        DataSourceID="SqlDataSource1"
+        AllowSorting="True" 
+        DataKeyNames="AdoptionListID">
         <Columns>
             <asp:BoundField DataField="ID" HeaderText="ID" SortExpression="ID" ReadOnly="True" />
             <asp:BoundField DataField="AdoptionListID" HeaderText="AdoptionListID" SortExpression="AdoptionListID" InsertVisible="False" ReadOnly="True" />
@@ -67,66 +80,22 @@
             <asp:BoundField DataField="DOB" HeaderText="DOB" SortExpression="DOB" />
             <asp:BoundField DataField="AdoptionFee" HeaderText="AdoptionFee" SortExpression="AdoptionFee" />
             <asp:BoundField DataField="AnimalType" HeaderText="AnimalType" SortExpression="AnimalType" />
-            <asp:CommandField SelectText="Details" DeleteText="Cancel" ShowDeleteButton="True" ShowSelectButton="True" />
+            
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:Button ID="BtnDetail" runat="server" Text="Details" OnClick="BtnDetail_Click"/>
+                </ItemTemplate>
+            </asp:TemplateField>
+            
+            <asp:CommandField ButtonType="Button" ShowDeleteButton="True" />
+            
         </Columns>
     </asp:GridView>
 
 
 
     <asp:FormView ID="FVAppDetails" runat="server" DataSourceID="SqlDataSource2" DataKeyNames="AdoptionListID">
-        <EditItemTemplate>
-            AdoptionListID:
-            <asp:Label ID="AdoptionListIDLabel1" runat="server" Text='<%# Eval("AdoptionListID") %>' />
-            <br />
-            Name:
-            <asp:TextBox ID="NameTextBox" runat="server" Text='<%# Bind("Name") %>' />
-            <br />
-            AnimalType:
-            <asp:TextBox ID="AnimalTypeTextBox" runat="server" Text='<%# Bind("AnimalType") %>' />
-            <br />
-            Age:
-            <asp:TextBox ID="AgeTextBox" runat="server" Text='<%# Bind("Age") %>' />
-            <br />
-            Sex:
-            <asp:TextBox ID="SexTextBox" runat="server" Text='<%# Bind("Sex") %>' />
-            <br />
-            Color:
-            <asp:TextBox ID="ColorTextBox" runat="server" Text='<%# Bind("Color") %>' />
-            <br />
-            DOB:
-            <asp:TextBox ID="DOBTextBox" runat="server" Text='<%# Bind("DOB") %>' />
-            <br />
-            AdoptionFee:
-            <asp:TextBox ID="AdoptionFeeTextBox" runat="server" Text='<%# Bind("AdoptionFee") %>' />
-            <br />
-            <asp:LinkButton ID="UpdateButton" runat="server" CausesValidation="True" CommandName="Update" Text="Update" />
-            &nbsp;<asp:LinkButton ID="UpdateCancelButton" runat="server" CausesValidation="False" CommandName="Cancel" Text="Cancel" />
-        </EditItemTemplate>
-        <InsertItemTemplate>
-            Name:
-            <asp:TextBox ID="NameTextBox" runat="server" Text='<%# Bind("Name") %>' />
-            <br />
-            AnimalType:
-            <asp:TextBox ID="AnimalTypeTextBox" runat="server" Text='<%# Bind("AnimalType") %>' />
-            <br />
-            Age:
-            <asp:TextBox ID="AgeTextBox" runat="server" Text='<%# Bind("Age") %>' />
-            <br />
-            Sex:
-            <asp:TextBox ID="SexTextBox" runat="server" Text='<%# Bind("Sex") %>' />
-            <br />
-            Color:
-            <asp:TextBox ID="ColorTextBox" runat="server" Text='<%# Bind("Color") %>' />
-            <br />
-            DOB:
-            <asp:TextBox ID="DOBTextBox" runat="server" Text='<%# Bind("DOB") %>' />
-            <br />
-            AdoptionFee:
-            <asp:TextBox ID="AdoptionFeeTextBox" runat="server" Text='<%# Bind("AdoptionFee") %>' />
-            <br />
-            <asp:LinkButton ID="InsertButton" runat="server" CausesValidation="True" CommandName="Insert" Text="Insert" />
-            &nbsp;<asp:LinkButton ID="InsertCancelButton" runat="server" CausesValidation="False" CommandName="Cancel" Text="Cancel" />
-        </InsertItemTemplate>
+        
         <ItemTemplate>
             AdoptionListID:
             <asp:Label ID="AdoptionListIDLabel" runat="server" Text='<%# Eval("AdoptionListID") %>' />
@@ -155,43 +124,69 @@
             <asp:Label ID="AdoptionFeeLabel" runat="server" Text='<%# Bind("AdoptionFee") %>' />
 
 
-            <asp:GridView ID="GVQuestion" runat="server" AutoGenerateColumns="False" DataKeyNames="QuestionResponseListID" DataSourceID="SqlDataSource3" OnRowDataBound="GVQuestion_RowDataBound" OnRowEditing="GVQuestion_RowEditing">
+            <asp:GridView ID="GVQuestion" runat="server" 
+                AutoGenerateColumns="False" 
+                DataKeyNames="QuestionListID" 
+                DataSourceID="SqlDataSource3"
+                PageSize="5">
                 <Columns>
-                    <asp:BoundField DataField="QuestionResponseListID" HeaderText="QuestionResponseListID" InsertVisible="False" ReadOnly="True" SortExpression="QuestionResponseListID" />
-                    <asp:BoundField DataField="QuestionText" HeaderText="QuestionText" SortExpression="QuestionText" />
-                    <asp:TemplateField HeaderText="ResponseValue" SortExpression="ResponseValue">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="txttype" runat="server" Text='<%# Bind("ResponseValue") %>'></asp:TextBox>
-                            <asp:DropDownList ID="ddltype" runat="server">
-                                <asp:ListItem>qwe</asp:ListItem>
-                            </asp:DropDownList>
-                        </EditItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("ResponseValue") %>'></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:BoundField DataField="QuestionType" HeaderStyle-CssClass="hidden" HeaderText="QuestionType" ItemStyle-CssClass="hidden" SortExpression="QuestionType">
-                    <HeaderStyle CssClass="hidden" />
-                    <ItemStyle CssClass="hidden" />
-                    </asp:BoundField>
-                    <asp:CommandField ShowEditButton="True" />
+                    <asp:BoundField DataField="QuestionListID" 
+                        HeaderText="QuestionListID" 
+                        InsertVisible="False" 
+                        ReadOnly="True" 
+                        SortExpression="QuestionListID"
+                        HeaderStyle-CssClass="hidden"
+                        ItemStyle-CssClass="hidden"
+                        FooterStyle-CssClass="hidden"/>
+                       
+                    <asp:BoundField DataField="QuestionText" 
+                        HeaderText="QuestionText"
+                        SortExpression="QuestionText"/>
+                    <asp:BoundField DataField="Answer" HeaderText="Answer" ReadOnly="True" SortExpression="Answer" />
                 </Columns>
             </asp:GridView>
 
+            <asp:GridView ID="gvQuestionsUpdate" runat="server" 
+                AutoGenerateColumns="False" 
+                DataKeyNames="QuestionListID"
+                DataSourceID="SqlDataSource3"
+                Visible="false">
+                <Columns>
+                    <asp:BoundField DataField="QuestionListID" 
+                        HeaderText="QuestionListID" 
+                        InsertVisible="False" 
+                        ReadOnly="True" 
+                        SortExpression="QuestionListID"
+                        HeaderStyle-CssClass="hidden"
+                        ItemStyle-CssClass="hidden"
+                        FooterStyle-CssClass="hidden"/>
+                    <asp:BoundField DataField="QuestionText" 
+                        HeaderText="QuestionText" 
+                        SortExpression="QuestionText" />
+                    <asp:BoundField DataField="Answer"
+                        HeaderText="Answer" 
+                        ReadOnly="True" 
+                        SortExpression="Answer" />
+                </Columns>
+            </asp:GridView>
 
+            <asp:Button ID="BtnEdit" runat="server" Text="Edit" OnClick="BtnEdit_Click"/>
+            <asp:Button ID="BtnSave" runat="server" Text="Save" Visible="false" OnClick="BtnSave_Click"/>
+            <asp:Button ID="BtnCancel" runat="server" Text="Cancel" Visible="false" OnClick="BtnCancel_Click"/>
         </ItemTemplate>
 
 
 
     </asp:FormView>
 
+        <asp:Label ID="lb" runat="server" Text="Label"></asp:Label>
 
-    <asp:Label ID="Label2" runat="server" Text="Label"></asp:Label>
-    <asp:DropDownList ID="DropDownList1" runat="server">
-        <asp:ListItem>weq</asp:ListItem>
-        <asp:ListItem>21e</asp:ListItem>
-    </asp:DropDownList>
-    <asp:Label ID="Label3" runat="server" Text="Label"></asp:Label>
-    </div>
+        </div>
+   
+
+    <article>
+
+    </article>
+
 
 </asp:Content>

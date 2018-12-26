@@ -40,20 +40,26 @@
 
     <div class="content absolute">
         <div class="row">
-            <div class="col-md-3">
-                <img src="Image/img-dog2.jpg" class="img1"/>
+            <div class="col-md-3" id="3col1">
+                <asp:LinkButton ID="lkDog" runat="server" OnClick="lkDog_Click">
+                    <asp:Image ID="Image1" ImageUrl="~/Image/img-dog2.jpg" CssClass="img1" runat="server"/>
+                </asp:LinkButton>
                 <p class="cols">This is the test img design</p>
                 <span class="designer">PassionForPets, Designer</span>
             </div>
 
             <div class="col-md-3">
-                <img src="Image/img-cat1.jpg" class="img1"/>
+                <asp:LinkButton ID="lkCat" runat="server" OnClick="lkCat_Click">
+                    <asp:Image ID="Image2" ImageUrl="~/Image/img-cat1.jpg" CssClass="img1" runat="server"/>
+                </asp:LinkButton>
                 <p class="cols">This is the test img design</p>
                 <span class="designer">PassionForPets, Designer</span>
             </div>
             
-            <div class="col-md-3">
-                <img src="Image/background-horse.jpg" class="img1"/>
+            <div class="col-md-3" >
+                <asp:LinkButton ID="lkOthers" runat="server" OnClick="lkOthers_Click">
+                    <asp:Image ID="Image3" ImageUrl="~/Image/background-horse.jpg" CssClass="img1" runat="server"/>
+                </asp:LinkButton>
                 <p class="cols">This is the test img design</p>
                 <span class="designer">PassionForPets, Designer</span>
             </div>

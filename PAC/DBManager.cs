@@ -9,6 +9,8 @@ namespace PAC
 {
     public class DBManager
     {
+        
+
         public static string[] getColumnName(string tableName)
         {
             SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
@@ -27,5 +29,18 @@ namespace PAC
             sqlConnection.Close();
             return columnList.ToArray();
         }
+
+        public static void ListManager(List<string> listManager, string selectedValue)
+        {
+            if (selectedValue == "Others")
+            {
+                listManager.Add("'Dog', 'Cat'");
+            }
+            else
+                listManager.Add(selectedValue);
+            
+        }
+        
+
     }
 }

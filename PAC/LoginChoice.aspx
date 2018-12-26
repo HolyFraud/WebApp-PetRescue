@@ -14,7 +14,7 @@
     <section>
         <div class="containerlogin">
             
-          <div class="innerleft" onclick="location.window='/MemberLogin.aspx'">
+          <div class="innerleft" onclick="location.href='/MemberLogin.aspx'" style="cursor:pointer;">
                 <a href="/MemberLogin.aspx">To Clients</a>
             </div>
               <div class="innerright">

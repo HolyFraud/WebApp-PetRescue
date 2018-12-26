@@ -71,11 +71,12 @@
     padding-bottom: 40px;
 }
 
-.img1{
+.img1 {
     width: 289px;
     height: 189px;
     margin-top: 28px;
     margin-bottom: 28px;
+    /*background-image: url('../Image/img-dog2.jpg')*/
 }
 
 .designer{

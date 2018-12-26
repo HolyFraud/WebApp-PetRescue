@@ -15,5 +15,23 @@ namespace PAC.View.Page
         {
             
         }
+
+        protected void lkDog_Click(object sender, EventArgs e)
+        {
+            Session["SearchRequest"] = "Dog";
+            Response.Redirect("/AnimalSearch.aspx");
+        }
+
+        protected void lkCat_Click(object sender, EventArgs e)
+        {
+            Session["SearchRequest"] = "Cat";
+            Response.Redirect("/AnimalSearch.aspx");
+        }
+
+        protected void lkOthers_Click(object sender, EventArgs e)
+        {
+            Session["SearchRequest"] = "Other";
+            Response.Redirect("/AnimalSearch.aspx");
+        }
     }
 }

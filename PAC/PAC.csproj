@@ -68,6 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AnimalAdoption.aspx" />
+    <Content Include="AnimalSearch.aspx" />
+    <Content Include="CSS\AnimalSearch.css" />
     <Content Include="CSS\bootstrap-theme.css" />
     <Content Include="CSS\bootstrap-theme.min.css" />
     <Content Include="CSS\bootstrap.css" />
@@ -79,6 +82,7 @@
     <Content Include="CSS\MP.css" />
     <Content Include="CSS\Style.css" />
     <Content Include="CSS\ManageMyAccount.css" />
+    <Content Include="CSS\AnimalAdoption.css" />
     <Content Include="Image\Logo-petadopt.jpeg" />
     <Content Include="Image\Logo-petadopt1.jpeg" />
     <Content Include="Image\MP-cat1.jpg" />
@@ -89,6 +93,8 @@
     <Content Include="Image\MP-dog2.jpg" />
     <Content Include="Image\MP-dog3.jpg" />
     <Content Include="Image\Panel copy.png" />
+    <Content Include="JS\AnimalAdoption.js" />
+    <Content Include="JS\AnimalSearchjs.js" />
     <Content Include="JS\bootstrap.js" />
     <Content Include="JS\bootstrap.min.js" />
     <Content Include="JS\jquery-3.3.1.min.js" />
@@ -120,6 +126,20 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimalAdoption.aspx.cs">
+      <DependentUpon>AnimalAdoption.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AnimalAdoption.aspx.designer.cs">
+      <DependentUpon>AnimalAdoption.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AnimalSearch.aspx.cs">
+      <DependentUpon>AnimalSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AnimalSearch.aspx.designer.cs">
+      <DependentUpon>AnimalSearch.aspx</DependentUpon>
+    </Compile>
     <Compile Include="DBManager.cs" />
     <Compile Include="LoginChoice.aspx.cs">
       <DependentUpon>LoginChoice.aspx</DependentUpon>
@@ -202,6 +222,7 @@
     <Content Include="CSS\bootstrap-theme.min.css.map" />
     <Content Include="CSS\bootstrap.css.map" />
     <Content Include="CSS\bootstrap.min.css.map" />
+    <Content Include="libman.json" />
     <None Include="packages.config" />
     <Content Include="MasterPage.Master" />
     <None Include="Web.Debug.config">

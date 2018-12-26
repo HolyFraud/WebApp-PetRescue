@@ -13,7 +13,10 @@ namespace PAC.Members
         protected void Page_Load(object sender, EventArgs e)
         {
             string thisEmail = Session["MemberEmail"].ToString();
-            Label1.Text = thisEmail + Session["MemberCreated"];
+            if (null != Session["CurrentAdoptionListID"])
+            {
+                lb.Text = Session["CurrentAdoptionListID"].ToString();
+            }
         }
 
         protected void lbUpdateInfo_Click(object sender, EventArgs e)
