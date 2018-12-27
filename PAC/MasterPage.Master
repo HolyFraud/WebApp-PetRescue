@@ -26,13 +26,12 @@
 
             <div class="menuitem absolute">
                 <a class="call" href="/default.aspx">Home</a>
-                <a class="call" href="/AnimalSearch.aspx">About</a>
+                <a class="call" href="/AnimalSearch.aspx">Search</a>
                 <asp:LinkButton ID="lbLogin" CssClass="call" Text="Login" runat="server" PostBackUrl="/LoginChoice.aspx"></asp:LinkButton>
                 <asp:LinkButton ID="lbSignup" CssClass="call" Text="Sign Up" PostBackUrl="/SignUp.aspx" runat="server"></asp:LinkButton>
-                
-                
-                <asp:LinkButton ID="lbAccountInfo" CssClass="call" runat="server" Text="My Account" OnClick="lbAccountInfo_Click"></asp:LinkButton>
-                <asp:LinkButton ID="lbLogout" CssClass="call" Text="Logout" runat="server" OnClick="lbLogout_Click"></asp:LinkButton>
+                <asp:LinkButton ID="lbAccountInfo" CssClass="call" runat="server" Text="My Account" OnClick="LbAccountInfo_Click"></asp:LinkButton>
+                <asp:LinkButton ID="lbLogout" CssClass="call" Text="Logout" runat="server" OnClick="LbLogout_Click"></asp:LinkButton>
+                <asp:LinkButton ID="LbAdvertiserLogin" CssClass="call" Text="AdvertiserLogin" runat="server" OnClick="LbAdvertiserLogin_Click"></asp:LinkButton>
                 
                 
 

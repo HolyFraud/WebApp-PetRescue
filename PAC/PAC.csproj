@@ -68,8 +68,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Advertisers\AdvertiserLogin.aspx" />
+    <Content Include="Advertisers\AdvertiserPortal.aspx" />
+    <Content Include="Advertisers\AdvertiserSignUp.aspx" />
     <Content Include="AnimalAdoption.aspx" />
     <Content Include="AnimalSearch.aspx" />
+    <Content Include="CSS\AdvertiserLoginStyle.css" />
+    <Content Include="CSS\AdvertiserSignUpStyle.css" />
     <Content Include="CSS\AnimalSearch.css" />
     <Content Include="CSS\bootstrap-theme.css" />
     <Content Include="CSS\bootstrap-theme.min.css" />
@@ -126,6 +131,27 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Advertisers\AdvertiserLogin.aspx.cs">
+      <DependentUpon>AdvertiserLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Advertisers\AdvertiserLogin.aspx.designer.cs">
+      <DependentUpon>AdvertiserLogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Advertisers\AdvertiserPortal.aspx.cs">
+      <DependentUpon>AdvertiserPortal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Advertisers\AdvertiserPortal.aspx.designer.cs">
+      <DependentUpon>AdvertiserPortal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Advertisers\AdvertiserSignUp.aspx.cs">
+      <DependentUpon>AdvertiserSignUp.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Advertisers\AdvertiserSignUp.aspx.designer.cs">
+      <DependentUpon>AdvertiserSignUp.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AnimalAdoption.aspx.cs">
       <DependentUpon>AnimalAdoption.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

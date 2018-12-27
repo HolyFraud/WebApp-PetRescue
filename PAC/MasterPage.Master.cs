@@ -25,18 +25,19 @@ namespace PAC.View.Page
                 lbSignup.Visible = false;
                 lbAccountInfo.Text = "Welcome! " +thisFname + " " + thisLname;
             }
-                
-
-
         }
 
-        protected void lbAccountInfo_Click(object sender, EventArgs e)
+        protected void LbAccountInfo_Click(object sender, EventArgs e)
         {
-            
             Response.Redirect("/Members/MemberHome.aspx");
         }
 
-        protected void lbLogout_Click(object sender, EventArgs e)
+        protected void LbAdvertiserLogin_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+        }
+
+        protected void LbLogout_Click(object sender, EventArgs e)
         {
             Session.Abandon();
             Response.Redirect("/default.aspx");

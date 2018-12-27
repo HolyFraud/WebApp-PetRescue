@@ -41,6 +41,8 @@ namespace PAC
             return guid;
         }
 
+        
+
         public static bool ExistEmail(string email)
         {
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
@@ -58,22 +60,22 @@ namespace PAC
             }
             conn.Close();
             return false;
-
         }
 
-        public static bool ValidEmail(string email)
+        public static bool ExistCompany(string command)
         {
-            const string Pattern = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-                                   + "@"
-                                   + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$";
-            Regex regex = new Regex(Pattern);
-            Match match = regex.Match(email);
-
-            if (match.Success)
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(command, conn);
+            int count = (int)cmd.ExecuteScalar();
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            if (count > 0)
             {
-                return false;
+                conn.Close();
+                return true;
             }
-            return true;
+            return false;
         }
 
         public static string NullToString(Object value)

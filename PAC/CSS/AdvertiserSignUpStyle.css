@@ -1,0 +1,94 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
+section {
+    width: 100vw;
+    height: 80vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 47vw;
+    height: 70vh;
+    background-image: url('../Image/background-Panel-Transparent-PNG.png');
+    background-size: cover;
+    background: rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+p {
+    font-size: 2vw;
+    font-family: 'Bitter';
+    color: black;
+    display: block;
+    font-family: 'Pacifico';
+    margin-bottom: 5vw;
+}
+
+.container .inner1 {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    text-align: center;
+    margin-top: 5%;
+}
+
+.inner1 a {
+    display: inline-block;
+    width: 60%;
+    height: 4%;
+    margin-bottom: 11%;
+    padding: 4% 4%;
+    font-family: 'Bitter';
+    color: white;
+    text-decoration: none;
+}
+
+.container .inner2 {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    text-align: center;
+}
+
+h3 {
+    font-size: 2.5vw;
+    font-family: 'Pacifico';
+    margin-bottom: 3%;
+    margin-top: 0;
+}
+
+input[type=text], input[type=password] {
+    width: 80%;
+    height: 7%;
+    margin-bottom: 3%;
+    border: 0;
+    background-color: transparent;
+    border-bottom: 1px solid #4b4040;
+}
+
+input[placeholder] {
+    font-size: 1.2vw;
+    padding-left: 3%;
+    font-family: 'Crete Round';
+}
+
+.btn {
+    width: 40%;
+    height: 10%;
+    margin-top: 50px;
+    margin-bottom: 10vh;
+    font-family: 'Crete Round';
+    font-size: 1.3vw;
+    background-color: #12a312;
+    color: white;
+    border: 1px solid;
+}
