@@ -43,9 +43,9 @@ namespace PAC.Members
                     }
                     reader.Close();
                 }
-                    //sent login info to home page
-                    
-                
+                //sent login info to home page
+
+                Session["RedirectFlag"] = "Member";
                 Response.Redirect("/Members/MemberHome.aspx");
             }
             else

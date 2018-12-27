@@ -7,6 +7,9 @@
         <div class="container">
         <div class="inner1">
             <h3>Sign Up</h3>
+            <asp:TextBox ID="txtAdvertiserName" placeholder="Advertiser Name" runat="server"></asp:TextBox>
+            <br />
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator13" ControlToValidate="txtAdvertiserName" Font-Size="Medium" ForeColor="Red" Display="Dynamic" runat="server" ErrorMessage="Advertiser Name is Empty...!"></asp:RequiredFieldValidator>
 
             <asp:TextBox ID="txtCompanyName" placeholder="Company Name" runat="server"></asp:TextBox>
             <br />
@@ -37,13 +40,13 @@
 
             <asp:TextBox ID="txtPhone2" placeholder="Company Mobile Phone" runat="server"></asp:TextBox>
 
+            </div>
+        <div class="inner2">
             <asp:TextBox ID="txtEmail1" placeholder="Company Email1" runat="server"></asp:TextBox>
             <br />
             <asp:RequiredFieldValidator ID="RequiredFieldValidator12" ControlToValidate="txtEmail1" Font-Size="Medium" ForeColor="Red" Display="Dynamic" runat="server" ErrorMessage="Company Email is Empty...!"></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="RegularExpressionValidator1" Font-Size="Medium" ForeColor="Red" Display="Dynamic" runat="server" ErrorMessage="Valid Email Address...!" ControlToValidate="txtEmail1" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*" ></asp:RegularExpressionValidator>
-        </div>
-        <div class="inner2">
-
+        
             <asp:TextBox ID="txtEmail2" placeholder="Company Email2" runat="server"></asp:TextBox>
             <br />
             <asp:RegularExpressionValidator ID="RegularExpressionValidator4" ControlToValidate="txtEmail2"  runat="server" Font-Size="Medium" ForeColor="Red" Display="Dynamic" ErrorMessage="Valid Email Address...!" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
@@ -76,9 +79,9 @@
             <br />
             <asp:CompareValidator ID="CompareValidator1" ControlToValidate="txtConfirmPassword" ControlToCompare="txtPassword" Font-Size="Medium" ForeColor="Red" Display="Dynamic" runat="server" ErrorMessage="Password NOT Match...!"></asp:CompareValidator>
             <br />
-            <asp:Button ID="btnSignUp" CssClass="btn" runat="server" Text="Sign Up" />
+            <asp:Button ID="btnSignUp" CssClass="btn" runat="server" Text="Sign Up" OnClick="BtnSignUp_Click"/>
             <br />
-            <asp:Label ID="Label1" runat="server" Text="Confrimed Email Has been sent to Your Email Address...!" Visible="false"></asp:Label>
+            <asp:Label ID="LbMessage" runat="server" Font-Size="Medium" ForeColor="Red" Display="Dynamic" Text="Confrimed Email Has been sent to Your Personal Email Address...!" Visible="false"></asp:Label>
 
         </div>
         </div>

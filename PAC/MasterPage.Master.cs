@@ -12,24 +12,41 @@ namespace PAC.View.Page
         private string thisFname, thisLname;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["MemberEmail"] == null || string.IsNullOrEmpty(Session["MemberEmail"].ToString()))
+            lbAccountInfo.Visible = false;
+            lbLogout.Visible = false;
+            if (Session["RedirectFlag"] == "Member")
             {
-                lbAccountInfo.Visible = false;
-                lbLogout.Visible = false;
+                NavLabelChange();
             }
-            else
+            if (Session["RedirectFlag"] == "Advertiser")
             {
-                thisFname = (string)Session["MemberFirstName"];
-                thisLname = (string)Session["MemberLastName"];
-                lbLogin.Visible = false;
-                lbSignup.Visible = false;
-                lbAccountInfo.Text = "Welcome! " +thisFname + " " + thisLname;
+                NavLabelChange();
             }
+        }
+
+        private void NavLabelChange()
+        {
+            thisFname = (string)Session["MemberFirstName"];
+            thisLname = (string)Session["MemberLastName"];
+            lbAccountInfo.Visible = true;
+            lbLogout.Visible = true;
+            lbLogin.Visible = false;
+            lbSignup.Visible = false;
+            LbAdvertiserLogin.Visible = false;
+            lbAccountInfo.Text = "Welcome! " + thisFname + " " + thisLname;
+
         }
 
         protected void LbAccountInfo_Click(object sender, EventArgs e)
         {
-            Response.Redirect("/Members/MemberHome.aspx");
+            if(Session["RedirectFlag"] == "Member")
+            {
+                Response.Redirect("/Members/MemberHome.aspx");
+            }
+            if (Session["RedirectFlag"] == "Advertiser")
+            {
+                Response.Redirect("/Advertisers/AdvertiserPortal.aspx");
+            }
         }
 
         protected void LbAdvertiserLogin_Click(object sender, EventArgs e)

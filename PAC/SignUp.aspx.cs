@@ -49,7 +49,7 @@ namespace PAC
 
                     cmd.ExecuteNonQuery();
                     string emailBody = "Hello " + txtfname.Text + "<br/>";
-                    emailBody = emailBody + "Thanks for signing up to Pet Adoption Central as a Rescue.<br/>";
+                    emailBody = emailBody + "Thanks for signing up to Pet Adoption Central as a public user.<br/>";
                     emailBody = emailBody + "You are nearly done.<br/>";
                     emailBody = emailBody + "Click on the link below and you will be taken to our website to complete the signup process.<br/>";
                     emailBody = emailBody + "We just need a few more details and then you will be able to list animals<br/><br/>";

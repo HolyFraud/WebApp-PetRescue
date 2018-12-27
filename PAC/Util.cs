@@ -68,13 +68,16 @@ namespace PAC
             conn.Open();
             SqlCommand cmd = new SqlCommand(command, conn);
             int count = (int)cmd.ExecuteScalar();
-            SqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-            if (count > 0)
+            using (SqlDataReader reader = cmd.ExecuteReader())
             {
-                conn.Close();
-                return true;
+
+                if (count > 0)
+                {
+                    conn.Close();
+                    return true;
+                }
             }
+            conn.Close();
             return false;
         }
 
@@ -201,6 +204,8 @@ namespace PAC
                     responseValuelist.Add(reader[0].ToString());
                 }
             }
+            reader.Close();
+            conn.Close();
         }
 
         public static string UpdateResponseValueCBLCommand(string value, string questionid, string adoptionid, List<string> responseidList, int idIndex)
