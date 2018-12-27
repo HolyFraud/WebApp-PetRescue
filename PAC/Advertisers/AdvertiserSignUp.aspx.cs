@@ -49,21 +49,31 @@ namespace PAC.Advertisers
             {
                 Guid CoGuid = Util.NewGuid();
                 Guid AdminGuid = Util.NewGuid();
-                SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-                conn.Open();
-                string AdvertiserListID = "";
-                SqlCommand cmd = new SqlCommand(InsertCompanyQuery(CoGuid), conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-                reader.Read();
-                AdvertiserListID = reader[0].ToString();
-                reader.Close();
-                cmd = new SqlCommand(InsertAdminQuery(AdvertiserListID, AdminGuid), conn);
-                cmd.ExecuteNonQuery();
-                conn.Close();
-
-                Util.SendEmail(txtAdminEmail.Text, EmailBody(CoGuid, AdminGuid));
-                LbMessage.Visible = true;
+                InsertAdvertiserInfo(CoGuid, AdminGuid);
+                SendEmail(CoGuid, AdminGuid);
             }
+        }
+
+        private void SendEmail(Guid coguid, Guid adminguid)
+        {
+            Util.SendEmail(txtAdminEmail.Text, EmailBody(coguid, adminguid));
+            LbMessage.Visible = true;
+        }
+
+        private void InsertAdvertiserInfo(Guid coguid, Guid adminguid)
+        {
+            
+            string AdvertiserListID = "";
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(InsertCompanyQuery(coguid), conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            AdvertiserListID = reader[0].ToString();
+            reader.Close();
+            cmd = new SqlCommand(InsertAdminQuery(AdvertiserListID, adminguid), conn);
+            cmd.ExecuteNonQuery();
+            conn.Close();
         }
 
         private string GetCurrentDateTime()
