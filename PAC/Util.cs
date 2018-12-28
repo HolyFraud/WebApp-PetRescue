@@ -17,16 +17,23 @@ namespace PAC
 
         static List<int> indexList = new List<int>();
         public static List<Control> controlList = new List<Control>();
+
+
         public static void SendEmail(string email, string body)
         {
             MailMessage MailMsg = new MailMessage(new MailAddress("pacsignup@passionforpets.com.au"), new MailAddress(email));
             MailMsg.Priority = MailPriority.High;
             MailMsg.IsBodyHtml = true;
             MailMsg.BodyEncoding = Encoding.Default;
-            MailMsg.Subject = "Pet Adoption Central - Signup as a Rescue";
+            MailMsg.Subject = "Pet Adoption Central";
             MailMsg.Body = body;
             SmtpClient SmtpMail = new SmtpClient();
             SmtpMail.Send(MailMsg);
+        }
+
+        public static string GetCurrentDateTime()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
 
         public static DateTime StringtoDatetime(string inputString)
@@ -43,12 +50,12 @@ namespace PAC
 
         
 
-        public static bool ExistEmail(string email)
+        public static bool ExistEmail(string email, string table_name, string column_name)
         {
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
             conn.Open();
 
-            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM MemberList WHERE Email = '" + email + "'", conn);
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM " + table_name + " WHERE " + column_name + " = '" + email + "'", conn);
             int memberCount = (int)cmd.ExecuteScalar();
             using (SqlDataReader reader = cmd.ExecuteReader()){
                 

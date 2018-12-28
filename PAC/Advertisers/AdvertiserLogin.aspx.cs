@@ -13,9 +13,9 @@ namespace PAC.Advertisers
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
         }
-        
+
 
         private string CountStatement(string email, string password)
         {
@@ -26,6 +26,12 @@ namespace PAC.Advertisers
         {
             return "SELECT FirstName, LastName FROM AdvertiserUserList WHERE EmailAddress = '" + txtUsername.Text + "'";
         }
+
+        private string UpdateLastLoginQuery()
+        {
+            return "UPDATE AdvertiserUserList SET LastLogin = '" + Util.GetCurrentDateTime() + "' WHERE EmailAddress = '" + txtUsername.Text + "'";
+        }
+
 
         private bool LoginBool()
         {
@@ -49,11 +55,15 @@ namespace PAC.Advertisers
             SqlCommand cmd = new SqlCommand(GetFullNameQuery(), conn);
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
-            Session["MemberFirstName"] = reader[0].ToString();
-            Session["MemberLastName"] = reader[1].ToString();
-            Session["MemberEmail"] = txtUsername.Text;
-            Session["RedirectFlag"] = "Advertiser";
+            Session["AdsFirstName"] = reader[0].ToString();
+            Session["AdsLastName"] = reader[1].ToString();
+            Session["AdsEmail"] = txtUsername.Text;
             Response.Redirect("/Advertisers/AdvertiserPortal.aspx");
+        }
+
+        private void UpdateLastLoginDateTime()
+        {
+            Util.ExecuteQuery(UpdateLastLoginQuery());
         }
 
         protected void BtnSignup_Click(object sender, EventArgs e)
@@ -65,6 +75,7 @@ namespace PAC.Advertisers
         {
             if (LoginBool())
             {
+                UpdateLastLoginDateTime();
                 PassAdvertiserInfoValue();
             }
             else

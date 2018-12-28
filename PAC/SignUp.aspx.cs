@@ -25,7 +25,7 @@ namespace PAC
         {
             
 
-            if (Util.ExistEmail(txtemail.Text))
+            if (Util.ExistEmail(txtemail.Text, "MemberList", "Email"))
             {
                 signupMessage.Text = "Email is exist...!";
                 signupMessage.Visible = true;

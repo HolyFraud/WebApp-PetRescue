@@ -13,13 +13,22 @@ namespace PAC.Advertisers
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            if (Request.QueryString["cogd"] != null)
+            if (!IsPostBack)
             {
-                Session["CompanyGuid"] = Request.QueryString["cogd"];
-                Session["AdvertiserGuid"] = Request.QueryString["adgd"];
-                ExecuteUpdateQuery();
-                Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+                if (Request.QueryString["cogd"] != null)
+                {
+                    Session["CompanyGuid"] = Request.QueryString["cogd"];
+                    Session["AdvertiserGuid"] = Request.QueryString["adgd"];
+                    ExecuteAdsUpdateQuery();
+                    ExecuteAdsUserUpdateQuery();
+                    Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+                }
+                if (Request.QueryString["usfg"] != null)
+                {
+                    Session["AdvertiserGuid"] = Request.QueryString["usgd"];
+                    ExecuteAdsUserUpdateQuery();
+                    Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+                }
             }
         }
 
@@ -76,14 +85,9 @@ namespace PAC.Advertisers
             conn.Close();
         }
 
-        private string GetCurrentDateTime()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        }
-
         private string UpdateConfirmDate(string guid, string column_name)
         {
-            return "Update " + column_name + " SET ConfirmDateTime = '" + GetCurrentDateTime() + "' WHERE GUID = '" + guid + "'";
+            return "Update " + column_name + " SET ConfirmDateTime = '" +  Util.GetCurrentDateTime() + "' WHERE GUID = '" + guid + "'";
         }
 
         private string GetConfirmDateTimeStatement(string guid, string column_name)
@@ -91,10 +95,14 @@ namespace PAC.Advertisers
             return "SELECT ConfirmDateTime FROM " + column_name + " WHERE GUID = '" + guid + "'";
         }
 
-        private void ExecuteUpdateQuery()
+        private void ExecuteAdsUserUpdateQuery()
+        {
+            Util.ExecuteQuery(UpdateConfirmDate(Session["AdvertiserGuid"].ToString(), "AdvertiserUserList"));
+        }
+
+        private void ExecuteAdsUpdateQuery()
         {
             Util.ExecuteQuery(UpdateConfirmDate(Session["CompanyGuid"].ToString(), "AdvertiserList"));
-            Util.ExecuteQuery(UpdateConfirmDate(Session["AdvertiserGuid"].ToString(), "AdvertiserUserList"));
         }
 
         private string EmailBody(Guid coguid, Guid adminguid)

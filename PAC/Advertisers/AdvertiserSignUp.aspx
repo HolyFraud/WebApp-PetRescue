@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="AdvertiserSignUp.aspx.cs" Inherits="PAC.Advertisers.AdvertiserSignUp" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="AdvertiserMasterPage.Master" AutoEventWireup="true" CodeBehind="AdvertiserSignUp.aspx.cs" Inherits="PAC.Advertisers.AdvertiserSignUp" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link href="/CSS/AdvertiserSignUpStyle.css" rel="stylesheet" />
 </asp:Content>
@@ -72,7 +72,7 @@
 
             <asp:TextBox ID="txtPassword" placeholder="Admin Password" TextMode="Password" runat="server"></asp:TextBox>
             <br />
-            <asp:RequiredFieldValidator ID="RequiredFieldValidator10" Font-Size="Medium" ForeColor="Red" Display="Dynamic" ControlToValidate="txtPassword" runat="server" ErrorMessage="Password is Empty...!"></asp:RequiredFieldValidator>
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator10" Font-Size="Medium" ForeColor="Red" Display="Dynamic" ControlToValidate="txtPassword" runat="server" ErrorMessage="Password is Empty...!" ></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="RegularExpressionValidator3" ControlToValidate="txtPassword"  Font-Size="Medium" ForeColor="Red" Display="Dynamic" runat="server" ErrorMessage="Password Must be 8 to 15 Characters...!" ValidationExpression="^([a-zA-Z0-9@*#]{8,15})$"></asp:RegularExpressionValidator>
             
             <asp:TextBox ID="txtConfirmPassword" placeholder="Confirm Password" TextMode="Password" runat="server"></asp:TextBox>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="AdvertiserLogin.aspx.cs" Inherits="PAC.Advertisers.AdvertiserLogin" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Advertisers/AdvertiserMasterPage.Master" AutoEventWireup="true" CodeBehind="AdvertiserLogin.aspx.cs" Inherits="PAC.Advertisers.AdvertiserLogin" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link href="/CSS/AdvertiserLoginStyle.css" rel="stylesheet" type="text/css"/>
     <link href="/CSS/bootstrap.min.css" rel="stylesheet" />
@@ -28,17 +28,4 @@
             </div>
 
         </div>
-    </section>
-
-
-
-
-
-
-
-
-
-
-
-
 </asp:Content>

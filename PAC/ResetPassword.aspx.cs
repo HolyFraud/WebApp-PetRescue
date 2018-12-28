@@ -34,7 +34,7 @@ namespace PAC
             lblEmailError.Visible = false;
             SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
             sqlConnection.Open();
-            if (!Util.ExistEmail(txtemail.Text))
+            if (!Util.ExistEmail(txtemail.Text, "MemberList", "Email"))
             {
                 lblEmailError.Visible = true;
             }

@@ -12,13 +12,7 @@ namespace PAC.View.Page
         private string thisFname, thisLname;
         protected void Page_Load(object sender, EventArgs e)
         {
-            lbAccountInfo.Visible = false;
-            lbLogout.Visible = false;
-            if (Session["RedirectFlag"] == "Member")
-            {
-                NavLabelChange();
-            }
-            if (Session["RedirectFlag"] == "Advertiser")
+            if (null != Session["MemberEmail"])
             {
                 NavLabelChange();
             }
@@ -34,19 +28,11 @@ namespace PAC.View.Page
             lbSignup.Visible = false;
             LbAdvertiserLogin.Visible = false;
             lbAccountInfo.Text = "Welcome! " + thisFname + " " + thisLname;
-
         }
 
         protected void LbAccountInfo_Click(object sender, EventArgs e)
         {
-            if(Session["RedirectFlag"] == "Member")
-            {
-                Response.Redirect("/Members/MemberHome.aspx");
-            }
-            if (Session["RedirectFlag"] == "Advertiser")
-            {
-                Response.Redirect("/Advertisers/AdvertiserPortal.aspx");
-            }
+            Response.Redirect("/Members/MemberHome.aspx");
         }
 
         protected void LbAdvertiserLogin_Click(object sender, EventArgs e)

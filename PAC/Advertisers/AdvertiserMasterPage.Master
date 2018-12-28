@@ -1,0 +1,45 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="AdvertiserMasterPage.master.cs" Inherits="PAC.Advertisers.AdvertiserMasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title>Pet Adopt Ads</title>
+        <link href="/CSS/MP.css" rel="stylesheet" />
+        <link href="/CSS/bootstrap.min.css" rel="stylesheet" />
+        <link href="/CSS/bootstrap.css" rel="stylesheet" />
+        <script src="/JS/jquery-3.3.1.min.js"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css?family=Boogaloo|Bree+Serif|Lobster|Merienda+One|PT+Sans|Righteous|Roboto+Slab|Saira|Sriracha|Yanone+Kaffeesatz');
+        </style>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+        
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        
+            <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+            </asp:ScriptManager>
+            <div class="menu">
+            <img src="Image/Logo-petadopt.jpeg" class="logo" />
+            <label class="absolute weblogo">Pet Adopt</label>
+
+            <div class="menuitem absolute">
+                <asp:LinkButton ID="LbHome" runat="server" CssClass="call" Text="Home" PostBackUrl="/default.aspx"></asp:LinkButton>
+                <asp:LinkButton ID="LbUsers" runat="server" Text="Users" CssClass="call" OnClick="LbUsers_Click"></asp:LinkButton>
+                <asp:LinkButton ID="LbAds" runat="server" CssClass="call" Text="Ads" OnClick="LbAds_Click"></asp:LinkButton>
+                <asp:LinkButton ID="LbReports" runat="server" CssClass="call" Text="Reports" OnClick="LbReports_Click"></asp:LinkButton>
+                <asp:LinkButton ID="LbAccountInfo" runat="server" CssClass="call" Text="myaccount" Visible="false"></asp:LinkButton>
+                <asp:LinkButton ID="LbLogout" runat="server" CssClass="call" Text="Logout" Visible="false" OnClick="LbLogout_Click"></asp:LinkButton>
+            </div>
+        </div>
+
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+
+            </asp:ContentPlaceHolder>
+        
+    </form>
+</body>
+</html>
