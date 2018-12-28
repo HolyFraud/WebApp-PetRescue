@@ -13,7 +13,7 @@
     justify-content: center;
 }
 
-.tablebtn {
+.table {
     text-align:center;
 }
 
@@ -29,8 +29,8 @@
 }
 
 .txt1 {
-    margin-top: 4vh;
-    margin-left: 2vw;
+    margin-top: 2vh;
+    margin-left: 1vw;
 }
 
 .txt2 {
@@ -40,13 +40,13 @@
 
     .txt1[placeholder], .txt2[placeholder] {
         font-family: 'Oleo Script Swash Caps';
-        font-size: 1.5vw;
+        font-size: 1.2vw;
         padding-left: 0.5vw;
     }
 
 .txtstyle {
     width: 20vw;
-    height: 6vh;
+    height: 4vh;
     border: 0;
     border-radius: 4%;
     background-color: rgba(252,251,251,0.80);
@@ -54,20 +54,83 @@
 }
 
 .btnstyle {
-    border-style: none;
-    border-color: inherit;
-    border-width: 0px;
-    margin-top: 10vh;
-    width: 11vw;
-    margin-left: 0.6vw;
-    font-family: 'Oleo Script Swash Caps';
-    font-size: 2vw;
-    color: black;
-    text-shadow: black 0px 10px 10px;
-    background-color: rgba(255,255,255,0.57);
+    width: 40%;
+    height: 10%;
+    margin-top: 50px;
+    margin-bottom: 10vh;
+    font-family: 'Crete Round';
+    font-size: 1.3vw;
+    background-color: #12a312;
+    color: white;
+    border: 1px solid;
 }
 
     .btnstyle:hover {
-        background-color: transparent;
-        box-shadow: black 0px 90px 80px;
+        background-color: #3e8e41;
     }
+
+/*input[type=checkbox] {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+}*/
+
+.chklabel {
+    display: block;
+    position: relative;
+    padding-left: 135px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+    .chklabel input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+.chklabel:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+.chklabel input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.chklabel input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.chklabel .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

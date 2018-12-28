@@ -112,7 +112,6 @@ namespace PAC.Advertisers
             email += "You are nearly done.<br/>";
             email += "Click on the link below and will be taken to our website to complete the signup process.<br/>";
             email += "http://localhost:49962/Advertisers/AdvertiserSignUp.aspx?cogd=" + coguid + "&adgd=" + adminguid;
-            
             return email;
         }
     }
