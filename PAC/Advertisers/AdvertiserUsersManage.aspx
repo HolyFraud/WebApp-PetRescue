@@ -70,6 +70,7 @@
                 <asp:ListItem Value="32">Can Add Ads</asp:ListItem>
                 <asp:ListItem Value="64">Can Edit Ads</asp:ListItem>
                 <asp:ListItem Value="128">Can Delete Ads</asp:ListItem>
+                <asp:ListItem Value="1">Is Admin</asp:ListItem>
             </asp:CheckBoxList>
             
             <asp:Button ID="BtnSave" runat="server" Text="Save" CssClass="btnstyle" OnClick="BtnSave_Click" ValidationGroup="UserValidationGroup"/>

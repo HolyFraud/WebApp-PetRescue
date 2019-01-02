@@ -65,15 +65,7 @@ namespace PAC.Advertisers
         {
             return Util.NewGuid();
         }
-
-        //private int IsAdminChecked()
-        //{
-        //    if (!chkAdmin.Checked)
-        //    {
-        //        return 0;
-        //    }
-        //    return 1;
-        //}
+        
 
         private string GetAdvertiserUserListID()
         {
