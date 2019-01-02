@@ -10,7 +10,16 @@
 namespace PAC.Advertisers {
     
     
-    public partial class AdvertiserLogin {
+    public partial class Default {
+        
+        /// <summary>
+        /// form1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
         /// Label1 control.
@@ -49,22 +58,22 @@ namespace PAC.Advertisers {
         protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// btnLogin control.
+        /// BtnLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLogin;
+        protected global::System.Web.UI.WebControls.Button BtnLogin;
         
         /// <summary>
-        /// btnSignup control.
+        /// BtnSignup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSignup;
+        protected global::System.Web.UI.WebControls.Button BtnSignup;
         
         /// <summary>
         /// LblError control.

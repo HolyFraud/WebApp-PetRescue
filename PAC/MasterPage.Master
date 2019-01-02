@@ -31,7 +31,6 @@
                 <asp:LinkButton ID="lbSignup" CssClass="call" Text="Sign Up" PostBackUrl="/SignUp.aspx" runat="server"></asp:LinkButton>
                 <asp:LinkButton ID="lbAccountInfo" CssClass="call" runat="server" Text="My Account" OnClick="LbAccountInfo_Click" Visible="false"></asp:LinkButton>
                 <asp:LinkButton ID="lbLogout" CssClass="call" Text="Logout" runat="server" OnClick="LbLogout_Click" Visible="false"></asp:LinkButton>
-                <asp:LinkButton ID="LbAdvertiserLogin" CssClass="call" Text="AdvertiserLogin" runat="server" OnClick="LbAdvertiserLogin_Click"></asp:LinkButton>
                 
                 
 

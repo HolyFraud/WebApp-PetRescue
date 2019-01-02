@@ -21,13 +21,13 @@ namespace PAC.Advertisers
                     Session["AdvertiserGuid"] = Request.QueryString["adgd"];
                     ExecuteAdsUpdateQuery();
                     ExecuteAdsUserUpdateQuery();
-                    Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+                    Response.Redirect("/Advertisers/Default.aspx");
                 }
                 if (Request.QueryString["usfg"] != null)
                 {
                     Session["AdvertiserGuid"] = Request.QueryString["usgd"];
                     ExecuteAdsUserUpdateQuery();
-                    Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
+                    Response.Redirect("/Advertisers/Default.aspx");
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace PAC.Advertisers
 
         private string InsertAdminQuery(string advertiserid, Guid guid)
         {
-            return "INSERT INTO AdvertiserUserList(AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, IsAdmin, Password, GUID) Values(" + advertiserid + ", '" + txtAdminFName.Text + "', '" + txtAdminLName.Text + "', '" + txtAdminEmail.Text + "', '" + txtAdminPhone1.Text + "', '" + txtAdminPhone2.Text + "', " + 1 + ", '" + txtPassword.Text + "', '" + guid + "')";
+            return "INSERT INTO AdvertiserUserList(AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, IsAdmin, Password, GUID, SecurityMask) Values(" + advertiserid + ", '" + txtAdminFName.Text + "', '" + txtAdminLName.Text + "', '" + txtAdminEmail.Text + "', '" + txtAdminPhone1.Text + "', '" + txtAdminPhone2.Text + "', " + 1 + ", '" + txtPassword.Text + "', '" + guid + "', " + 255 + "')";
         }
 
         protected void BtnSignUp_Click(object sender, EventArgs e)
@@ -113,6 +113,11 @@ namespace PAC.Advertisers
             email += "Click on the link below and will be taken to our website to complete the signup process.<br/>";
             email += "http://localhost:49962/Advertisers/AdvertiserSignUp.aspx?cogd=" + coguid + "&adgd=" + adminguid;
             return email;
+        }
+
+        protected void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("/Advertisers/Default.aspx");
         }
     }
 }

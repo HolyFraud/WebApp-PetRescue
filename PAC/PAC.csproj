@@ -68,11 +68,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Advertisers\AdvertiserLogin.aspx" />
+    <Content Include="Advertisers\AdvertiserHome.aspx" />
     <Content Include="Advertisers\AdvertiserPortal.aspx" />
     <Content Include="Advertisers\AdvertiserReports.aspx" />
     <Content Include="Advertisers\AdvertiserSignUp.aspx" />
     <Content Include="Advertisers\AdvertiserUsersManage.aspx" />
+    <Content Include="Advertisers\Default.aspx" />
+    <Content Include="Advertisers\ResetPassword.aspx" />
     <Content Include="AnimalAdoption.aspx" />
     <Content Include="AnimalSearch.aspx" />
     <Content Include="CSS\AdvertiserLoginStyle.css" />
@@ -134,12 +136,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Advertisers\AdvertiserLogin.aspx.cs">
-      <DependentUpon>AdvertiserLogin.aspx</DependentUpon>
+    <Compile Include="Advertisers\AdvertiserHome.aspx.cs">
+      <DependentUpon>AdvertiserHome.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Advertisers\AdvertiserLogin.aspx.designer.cs">
-      <DependentUpon>AdvertiserLogin.aspx</DependentUpon>
+    <Compile Include="Advertisers\AdvertiserHome.aspx.designer.cs">
+      <DependentUpon>AdvertiserHome.aspx</DependentUpon>
     </Compile>
     <Compile Include="Advertisers\AdvertiserMasterPage.Master.cs">
       <DependentUpon>AdvertiserMasterPage.Master</DependentUpon>
@@ -176,6 +178,20 @@
     <Compile Include="Advertisers\AdvertiserUsersManage.aspx.designer.cs">
       <DependentUpon>AdvertiserUsersManage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Advertisers\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Advertisers\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Advertisers\ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Advertisers\ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AnimalAdoption.aspx.cs">
       <DependentUpon>AnimalAdoption.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -191,6 +207,7 @@
       <DependentUpon>AnimalSearch.aspx</DependentUpon>
     </Compile>
     <Compile Include="DBManager.cs" />
+    <Compile Include="Includes.cs" />
     <Compile Include="LoginChoice.aspx.cs">
       <DependentUpon>LoginChoice.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

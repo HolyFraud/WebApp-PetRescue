@@ -24,8 +24,7 @@ namespace PAC
         protected void BtnSignup2_Click(object sender, EventArgs e)
         {
             SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            try
-            {
+            
                 sqlConnection.Open();
                 string command = "UPDATE MemberList SET MiddleName = @MiddleName, Phone1 = @Phone1, " +
                                                             "Phone2 = @Phone2, Address = @Address, Address2 = @Address2, " +
@@ -49,16 +48,10 @@ namespace PAC
                 cmd.ExecuteNonQuery();
 
                 SqlCommand cmd2 = new SqlCommand("SELECT Email FROM MemberList WHERE GUID = '" + thisGuid + "'", sqlConnection);
-                using (SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        thisEmail = (string)reader["Email"];
-                    }
-
-
-
-                }
+                SqlDataReader reader = cmd2.ExecuteReader();
+                reader.Read();
+                thisEmail = (string)reader[0];
+                    
 
                 string emailBody = "All Finished...!";
                 emailBody = emailBody + "Thanks for your registration...!";
@@ -66,16 +59,7 @@ namespace PAC
                 Util.SendEmail(thisEmail, emailBody);
                 signupMessage.Visible = true;
 
-            }
-            catch (Exception)
-            {
-                signupMessage.Text = "Sign Up Failed...!";
-                throw;
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
+            
         }
     }
 }

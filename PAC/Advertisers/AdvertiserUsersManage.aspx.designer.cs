@@ -130,13 +130,13 @@ namespace PAC.Advertisers {
         protected global::System.Web.UI.WebControls.TextBox txtEmail;
         
         /// <summary>
-        /// chkAdmin control.
+        /// txtpswd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAdmin;
+        protected global::System.Web.UI.WebControls.TextBox txtpswd;
         
         /// <summary>
         /// RequiredFieldValidator4 control.
@@ -146,15 +146,6 @@ namespace PAC.Advertisers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator4;
-        
-        /// <summary>
-        /// txtpswd control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtpswd;
         
         /// <summary>
         /// txtcopswd control.
@@ -200,6 +191,15 @@ namespace PAC.Advertisers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RegularExpressionValidator RegularExpressionValidator1;
+        
+        /// <summary>
+        /// cblAuthControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblAuthControl;
         
         /// <summary>
         /// BtnSave control.

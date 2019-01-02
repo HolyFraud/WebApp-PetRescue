@@ -26,7 +26,7 @@
             <label class="absolute weblogo">Pet Adopt</label>
 
             <div class="menuitem absolute">
-                <asp:LinkButton ID="LbHome" runat="server" CssClass="call" Text="Home" PostBackUrl="/default.aspx"></asp:LinkButton>
+                <asp:LinkButton ID="LbHome" runat="server" CssClass="call" Text="Home" PostBackUrl="/Advertisers/AdvertiserHome.aspx"></asp:LinkButton>
                 <asp:LinkButton ID="LbUsers" runat="server" Text="Users" CssClass="call" OnClick="LbUsers_Click"></asp:LinkButton>
                 <asp:LinkButton ID="LbAds" runat="server" CssClass="call" Text="Ads" OnClick="LbAds_Click"></asp:LinkButton>
                 <asp:LinkButton ID="LbReports" runat="server" CssClass="call" Text="Reports" OnClick="LbReports_Click"></asp:LinkButton>

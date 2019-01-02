@@ -9,13 +9,12 @@ using System.Web.UI.WebControls;
 
 namespace PAC.Advertisers
 {
-    public partial class AdvertiserLogin : System.Web.UI.Page
+    public partial class Default : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
 
         }
-
 
         private string CountStatement(string email, string password)
         {
@@ -31,7 +30,6 @@ namespace PAC.Advertisers
         {
             return "UPDATE AdvertiserUserList SET LastLogin = '" + Util.GetCurrentDateTime() + "' WHERE EmailAddress = '" + txtUsername.Text + "'";
         }
-
 
         private bool LoginBool()
         {
@@ -66,11 +64,6 @@ namespace PAC.Advertisers
             Util.ExecuteQuery(UpdateLastLoginQuery());
         }
 
-        protected void BtnSignup_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("/Advertisers/AdvertiserSignUp.aspx");
-        }
-
         protected void BtnLogin_Click(object sender, EventArgs e)
         {
             if (LoginBool())
@@ -82,6 +75,11 @@ namespace PAC.Advertisers
             {
                 LblError.Visible = true;
             }
+        }
+
+        protected void BtnSignup_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("/Advertisers/AdvertiserSignUp.aspx");
         }
     }
 }

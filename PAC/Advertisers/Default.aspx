@@ -1,13 +1,16 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Advertisers/AdvertiserMasterPage.Master" AutoEventWireup="true" CodeBehind="AdvertiserLogin.aspx.cs" Inherits="PAC.Advertisers.AdvertiserLogin" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="PAC.Advertisers.Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
     <link href="/CSS/AdvertiserLoginStyle.css" rel="stylesheet" type="text/css"/>
     <link href="/CSS/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Leckerli+One|Oleo+Script+Swash+Caps');
-    </style>
-</asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <section class="cover">
+</head>
+<body>
+    <form id="form1" runat="server">
+        <section class="cover">
         <div class="elements">
             <div class="intro">
                 <asp:Label ID="Label1" runat="server" CssClass="Login1" Text="Login"></asp:Label>
@@ -17,9 +20,9 @@
                     
                     <asp:Label ID="Label2" CssClass="lblerror" runat="server" Visible="false" Font-Size="Medium" ForeColor="Red"  Text="Invalid Username or Password"></asp:Label>
 
-                    <asp:Button ID="btnLogin" CssClass="btnstyle" runat="server" Text="Login" OnClick="BtnLogin_Click"></asp:Button>
+                    <asp:Button ID="BtnLogin" CssClass="btnstyle" runat="server" Text="Login" OnClick="BtnLogin_Click"></asp:Button>
                     
-                    <asp:Button ID="btnSignup" CssClass="btnstyle" runat="server" Text="Sign Up" OnClick="BtnSignup_Click"></asp:Button>
+                    <asp:Button ID="BtnSignup" CssClass="btnstyle" runat="server" Text="Sign Up" OnClick="BtnSignup_Click"></asp:Button>
                     <div>
                         <asp:Label ID="LblError"  runat="server" Visible="false" Font-Size="Large" ForeColor="Red"  Text="Invalid Username or Password...!"></asp:Label>
                         <br />
@@ -28,4 +31,7 @@
             </div>
 
         </div>
-</asp:Content>
+    </section>
+    </form>
+</body>
+</html>

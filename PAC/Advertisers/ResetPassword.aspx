@@ -1,16 +1,15 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ResetPassword.aspx.cs" Inherits="PAC.ResetPassword" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ResetPassword.aspx.cs" Inherits="PAC.Advertisers.ResetPassword" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <link href="CSS/ForgetPassword.css" rel="stylesheet" />
+<!DOCTYPE html>
 
-
-
-</asp:Content>
-
-
-<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
-    <section>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Reset Advertiser Password</title>
+    <link href="/CSS/ForgetPassword.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="form1" runat="server">
+        <section>
         <div class="container">
             <div class="upper1">
                 <h3>Reset Your Password</h3>
@@ -35,5 +34,6 @@
 
         </div>
     </section>
-
-</asp:Content>
+    </form>
+</body>
+</html>

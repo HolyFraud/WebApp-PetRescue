@@ -29,6 +29,11 @@ namespace PAC
             }
         }
 
+        private string QueryUpdateMemberPassword()
+        {
+            return "UPDATE MemberList SET Password = '" + txtnewpswd.Text + "' WHERE GUID = '" + guid + "'";
+        }
+
         protected void BtnReset_Click(object sender, EventArgs e)
         {
             lblEmailError.Visible = false;
@@ -68,14 +73,8 @@ namespace PAC
 
         protected void BtnSubmit_Click(object sender, EventArgs e)
         {
-            
-            SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            sqlConnection.Open();
 
-            string sqlQuery = "UPDATE MemberList SET Password = '" + txtnewpswd.Text + "' WHERE GUID = '" + guid + "'";
-            SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
-            cmd.ExecuteNonQuery();
-            sqlConnection.Close();
+            Util.ExecuteQuery(QueryUpdateMemberPassword());
             lblMessage.Text = "<br />Password has been changed successfully...!";
             lblMessage.Visible = true;
         }

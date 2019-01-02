@@ -26,18 +26,13 @@ namespace PAC.View.Page
             lbLogout.Visible = true;
             lbLogin.Visible = false;
             lbSignup.Visible = false;
-            LbAdvertiserLogin.Visible = false;
             lbAccountInfo.Text = "Welcome! " + thisFname + " " + thisLname;
         }
 
         protected void LbAccountInfo_Click(object sender, EventArgs e)
         {
+            Session.Remove("CurrentAdoptionListID");
             Response.Redirect("/Members/MemberHome.aspx");
-        }
-
-        protected void LbAdvertiserLogin_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("/Advertisers/AdvertiserLogin.aspx");
         }
 
         protected void LbLogout_Click(object sender, EventArgs e)

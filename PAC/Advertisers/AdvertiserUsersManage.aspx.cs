@@ -11,6 +11,9 @@ namespace PAC.Advertisers
 {
     public partial class AdvertiserUsersManage : System.Web.UI.Page
     {
+
+        Includes inc = new Includes();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             GenerateAdsIDSession();
@@ -40,7 +43,7 @@ namespace PAC.Advertisers
 
         private string InsertNewAdsUserQuery()
         {
-            return "INSERT INTO AdvertiserUserList (AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, CreatedBy, IsAdmin, Password, GUID) Values(" + Session["AdsListID"].ToString() + ", '" + txtFName.Text + "', '" + txtLName.Text + "', '" + txtEmail.Text + "', '" + txtPhone1.Text + "', '" + txtPhone2.Text + "', '" + GetAdvertiserUserListID() + "', " + IsAdminChecked() + ", '" + txtpswd.Text + "', '" + GetGuid() + "')";
+            return "INSERT INTO AdvertiserUserList (AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, CreatedBy, IsAdmin, Password, GUID) Values(" + Session["AdsListID"].ToString() + ", '" + txtFName.Text + "', '" + txtLName.Text + "', '" + txtEmail.Text + "', '" + txtPhone1.Text + "', '" + txtPhone2.Text + "', '" + GetAdvertiserUserListID() + "', 0 , '" + txtpswd.Text + "', '" + GetGuid() + "')";
         }
 
         private string GetAdsNewUserGuidQuery()
@@ -63,14 +66,14 @@ namespace PAC.Advertisers
             return Util.NewGuid();
         }
 
-        private int IsAdminChecked()
-        {
-            if (!chkAdmin.Checked)
-            {
-                return 0;
-            }
-            return 1;
-        }
+        //private int IsAdminChecked()
+        //{
+        //    if (!chkAdmin.Checked)
+        //    {
+        //        return 0;
+        //    }
+        //    return 1;
+        //}
 
         private string GetAdvertiserUserListID()
         {
@@ -136,6 +139,19 @@ namespace PAC.Advertisers
             {
                 BtnAdd.Visible = true;
             }
+        }
+
+        private int CalculateSecurityMask()
+        {
+            int securitymask = 0;
+            foreach (ListItem item in cblAuthControl.Items)
+            {
+                if (item.Selected)
+                {
+                    securitymask += Convert.ToInt32(item.Value);
+                }
+            }
+            return securitymask;
         }
         
         private void GenerateAdsIDSession()

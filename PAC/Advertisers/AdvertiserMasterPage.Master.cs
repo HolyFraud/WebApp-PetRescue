@@ -5,14 +5,19 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
 namespace PAC.Advertisers
 {
     public partial class AdvertiserMasterPage : System.Web.UI.MasterPage
     {
+        Includes inc = new Includes();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             NavLabelChange();
+
         }
+
 
         private void NavLabelChange()
         {
