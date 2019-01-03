@@ -49,6 +49,33 @@ namespace PAC.Advertisers {
         protected global::System.Web.UI.WebControls.Button BtnAdd;
         
         /// <summary>
+        /// PlSteps control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PlSteps;
+        
+        /// <summary>
+        /// lbStep1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbStep1;
+        
+        /// <summary>
+        /// lbStep2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbStep2;
+        
+        /// <summary>
         /// PlNewAdsUser control.
         /// </summary>
         /// <remarks>
@@ -193,6 +220,24 @@ namespace PAC.Advertisers {
         protected global::System.Web.UI.WebControls.RegularExpressionValidator RegularExpressionValidator1;
         
         /// <summary>
+        /// PlSecurityMask control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PlSecurityMask;
+        
+        /// <summary>
+        /// chkIsAdmin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkIsAdmin;
+        
+        /// <summary>
         /// cblAuthControl control.
         /// </summary>
         /// <remarks>
@@ -200,6 +245,24 @@ namespace PAC.Advertisers {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBoxList cblAuthControl;
+        
+        /// <summary>
+        /// Plbtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Plbtn;
+        
+        /// <summary>
+        /// BtnNext control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnNext;
         
         /// <summary>
         /// BtnSave control.

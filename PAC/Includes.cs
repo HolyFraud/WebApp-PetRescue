@@ -25,7 +25,7 @@ namespace PAC
 
         public bool CanAddUsers(int securitymask)
         {
-            int AuthNum = (int)UserPermission.AddAds;
+            int AuthNum = (int)UserPermission.AddUsers;
             if ((securitymask & AuthNum) == 0)
             {
                 return false;

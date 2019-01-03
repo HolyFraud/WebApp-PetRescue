@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -11,13 +12,14 @@ namespace PAC.Advertisers
 {
     public partial class AdvertiserUsersManage : System.Web.UI.Page
     {
-
+        
         Includes inc = new Includes();
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
+            
             GenerateAdsIDSession();
-            ControlVisbility();
+            ControlLoginUserAuthority();
         }
 
 
@@ -43,7 +45,12 @@ namespace PAC.Advertisers
 
         private string InsertNewAdsUserQuery()
         {
-            return "INSERT INTO AdvertiserUserList (AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, CreatedBy, IsAdmin, Password, GUID) Values(" + Session["AdsListID"].ToString() + ", '" + txtFName.Text + "', '" + txtLName.Text + "', '" + txtEmail.Text + "', '" + txtPhone1.Text + "', '" + txtPhone2.Text + "', '" + GetAdvertiserUserListID() + "', 0 , '" + txtpswd.Text + "', '" + GetGuid() + "')";
+            return "INSERT INTO AdvertiserUserList (AdvertiserListID, FirstName, LastName, EmailAddress, Phone1, Phone2, CreatedBy, IsAdmin, Password, GUID, SecurityMask) Values(" + Session["AdsListID"].ToString() + ", '" + txtFName.Text + "', '" + txtLName.Text + "', '" + txtEmail.Text + "', '" + txtPhone1.Text + "', '" + txtPhone2.Text + "', '" + GetAdvertiserUserListID() + "', " + IsAdminSelected() + ", '" + txtpswd.Text + "', '" + Util.NewGuid() + "', " + CalculateSecurityMask() + ")";
+        }
+
+        private string ActiveAdsUserQuery()
+        {
+            return "Update AdvertiserUserList Set FirstName = '" + txtFName.Text + "', LastName = '" + txtLName.Text + "', Phone1 = '" + txtPhone1.Text + "', Phone2 = '" + txtPhone2.Text + "', Password = '" + txtpswd.Text + "', CreatedBy = " + GetAdvertiserUserListID() + ", IsAdmin = " + IsAdminSelected() + ", SecurityMask = " + CalculateSecurityMask() + ", RecordStatus = 1 Where EmailAddress = '" + txtEmail.Text + "'";
         }
 
         private string GetAdsNewUserGuidQuery()
@@ -56,16 +63,26 @@ namespace PAC.Advertisers
             return "Select GUID From AdvertiserUserList Where EmailAddress = '" + Session["AdsEmail"].ToString() + "'";
         }
 
-        private void ExecuteInserNewUserQuery()
+        private string ActiveUserIfIsMyselfQuery(string id)
+        {
+            return "Update AdvertiserUserList Set RecordStatus = 1 Where AdvertiserUserListID = " + id;
+        }
+
+        private string DeactivateUserQuery(string id)
+        {
+            return "Update AdvertiserUserList Set RecordStatus = 0 Where AdvertiserUserListID = " + id;
+        }
+
+        private void ExecuteInsertNewUserQuery()
         {
             Util.ExecuteQuery(InsertNewAdsUserQuery());
         }
-
-        private Guid GetGuid()
-        {
-            return Util.NewGuid();
-        }
         
+        private void ExecuteActiveUserQuery()
+        {
+            Util.ExecuteQuery(ActiveAdsUserQuery());
+        }
+
 
         private string GetAdvertiserUserListID()
         {
@@ -124,47 +141,125 @@ namespace PAC.Advertisers
             return false;
         }
 
-        private void ControlVisbility()
+        private int IsAdminSelected()
         {
-            HideAdsUsersTable();
-            if (IsAdminFlag(GetIsAdminValue(GetIsAdminValueQuery())))
+            if (!chkIsAdmin.Checked)
             {
-                BtnAdd.Visible = true;
+                return 0;
             }
+            return 1;
         }
 
         private int CalculateSecurityMask()
         {
             int securitymask = 0;
-            foreach (ListItem item in cblAuthControl.Items)
+            if (IsAdminSelected() == 1)
             {
-                if (item.Selected)
+                return 63;
+            }
+            else
+            {
+                foreach (ListItem item in cblAuthControl.Items)
                 {
-                    securitymask += Convert.ToInt32(item.Value);
+                    if (item.Selected)
+                    {
+                        securitymask += Convert.ToInt32(item.Value);
+                    }
                 }
             }
             return securitymask;
         }
-        
+
+        private bool CanViewAdsUserList()
+        {
+            int securitymask = Convert.ToInt32(Session["CurrentUserSecurityMask"]);
+            if (inc.CanAddUsers(securitymask)) return true;
+            if (inc.CanEditUsers(securitymask)) return true;
+            if (inc.CanDeleteUsers(securitymask)) return true;
+            return false;
+        }
+
+        private bool CanViewAdsList()
+        {
+            int securitymask = Convert.ToInt32(Session["CurrentUserSecurityMask"]);
+            if (inc.CanAddAds(securitymask)) return true;
+            if (inc.CanEditAds(securitymask)) return true;
+            if (inc.CanDeleteAds(securitymask)) return true;
+            return false;
+        }
+
+        private bool CanEditAdsUserList()
+        {
+            int securitymask = Convert.ToInt32(Session["CurrentUserSecurityMask"]);
+            if (inc.CanEditUsers(securitymask))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CanDeleteAdsUserList()
+        {
+            int securitymask = Convert.ToInt32(Session["CurrentUserSecurityMask"]);
+            if (inc.CanDeleteUsers(securitymask))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CanAddAdsUser()
+        {
+            int securitymask = Convert.ToInt32(Session["CurrentUserSecurityMask"]);
+            if (inc.CanAddUsers(securitymask))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void HideAddNewUserButton()
+        {
+            if (!CanAddAdsUser())
+            {
+                BtnAdd.Visible = false;
+            }
+        }
+
+        private void HideUserListEditColumn()
+        {
+            if (!CanEditAdsUserList())
+            {
+                gvAdvertiserUsers.Columns[7].Visible = false;
+            }
+        }
+
+        private void HideUserListDeleteColumn()
+        {
+            if (!CanDeleteAdsUserList())
+            {
+                gvAdvertiserUsers.Columns[8].Visible = false;
+            }
+        }
+
+        private void ControlLoginUserAuthority()
+        {
+            HideUserListEditColumn();
+            HideUserListDeleteColumn();
+            HideAddNewUserButton();
+        }
+
         private void GenerateAdsIDSession()
         {
-            if(IsAdminFlag(GetIsAdminValue(GetIsAdminValueQuery()))) Session["AdsListID"] = GetAdvertiserListID();
+            if (IsAdminFlag(GetIsAdminValue(GetIsAdminValueQuery())))
+                Session["AdsListID"] = GetAdvertiserListID();
+            if(CanViewAdsUserList())
+                Session["AdsListID"] = GetAdvertiserListID();
         }
-
-        protected void BtnAdd_Click(object sender, EventArgs e)
-        {
-            PlNewAdsUser.Visible = true;
-        }
-
-        protected void BtnCancel_Click(object sender, EventArgs e)
-        {
-            PlNewAdsUser.Visible = false;
-        }
-
-
+        
         private string EmailBody(string userguid)
         {
-            string email = "Hello " + txtFName.Text + "<br/>";
+            string email = "Hello " + txtFName.Text + "<br />";
             email += "Thanks for signing up to Pet Adoption Central as an advertiser.<br/>";
             email += "You are nearly done.<br/>";
             email += "Click on the link below and will be taken to our website to complete the signup process.<br/>";
@@ -177,29 +272,134 @@ namespace PAC.Advertisers
             Util.SendEmail(txtEmail.Text, EmailBody(GetAdsNewUserGuid(GetAdsNewUserGuidQuery())));
         }
 
-        private void HideAdsUsersTable()
+        private void ControlVisible(bool vsb1, bool vsb2, bool vsb3)
         {
-            if (GetIsAdminValue(GetIsAdminValueByEmailQuery()) != 1)
+            PlNewAdsUser.Visible = vsb1;
+            BtnNext.Visible = vsb1;
+            BtnCancel.Visible = vsb3;
+            lbStep1.Visible = vsb3;
+            lbStep2.Visible = vsb3;
+            PlSecurityMask.Visible = vsb2;
+            BtnSave.Visible = vsb2;
+        }
+
+        private void ControlLabelHighlight(Color color1, Color color2)
+        {
+            lbStep1.BackColor = color1;
+            lbStep2.BackColor = color2;
+        }
+
+        
+        
+        private bool NoItemChecked()
+        {
+            if (chkIsAdmin.Checked)
             {
-                gvAdvertiserUsers.Visible = false;
+                return false;
             }
+            else
+            {
+                foreach (ListItem item in cblAuthControl.Items)
+                {
+                    if (item.Selected)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        protected void BtnNext_Click(object sender, EventArgs e)
+        {
+            ControlVisible(false, true, true);
+            ControlLabelHighlight(Color.White, Color.Blue);
+
+        }
+
+        protected void BtnAdd_Click(object sender, EventArgs e)
+        {
+            ControlVisible(true, false, true);
+            ControlLabelHighlight(Color.Blue, Color.White);
+        }
+
+        protected void BtnCancel_Click(object sender, EventArgs e)
+        {
+            ControlVisible(false, false, false);
         }
 
         protected void BtnSave_Click(object sender, EventArgs e)
         {
-            if (Util.ExistEmail(txtEmail.Text, "AdvertiserUserList", "EmailAddress"))
+            if (NoItemChecked())
             {
-                LbMessege.Text = "Email has been Exist...!";
+                LbMessege.Text = "Please Choose At Least One...!";
             }
             else
             {
-                ExecuteInserNewUserQuery();
-                LbMessege.Text = "Confrim Email has been sent to User...!";
-                SendEmail();
-                gvAdvertiserUsers.DataBind();
-                PlNewAdsUser.Visible = false;
+                if (Util.ExistEmail(txtEmail.Text, "AdvertiserUserList", "EmailAddress"))
+                {
+                    if (Util.RecordStatusActive(txtEmail.Text, "AdvertiserUserList", "EmailAddress"))
+                    {
+                        LbMessege.Text = "User has been Exist...!";
+                    }
+                    else
+                    {
+                        ExecuteActiveUserQuery();
+                        SendEmail();
+                        gvAdvertiserUsers.DataBind();
+                        PlNewAdsUser.Visible = false;
+                        ControlVisible(false, false, false);
+                    }
+                }
+                else
+                {
+                    ExecuteInsertNewUserQuery();
+                    LbMessege.Text = "Confrim Email has been sent to User...!";
+                    SendEmail();
+                    gvAdvertiserUsers.DataBind();
+                    PlNewAdsUser.Visible = false;
+                    ControlVisible(false, false, false);
+                }
+                
             }
+            
+        }
+        
 
+        protected void ChkIsAdmin_CheckedChanged(object sender, EventArgs e)
+        {
+            bool b = (sender as CheckBox).Checked;
+            foreach (ListItem item in cblAuthControl.Items)
+            {
+                item.Selected = b;
+            }
+        }
+
+
+        private bool CanDeleteUsers(object sender, string id)
+        {
+            if (GetAdvertiserUserListID() == id)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        protected void BtnDelete_Click(object sender, EventArgs e)
+        {
+            GridViewRow row = ((sender as Button).NamingContainer) as GridViewRow;
+            string id = gvAdvertiserUsers.DataKeys[row.RowIndex].Values[0].ToString();
+            if (!CanDeleteUsers(sender, id))
+            {
+                LbMessege.Visible = true;
+                LbMessege.Text = "You Can't Delete Yourself...!";
+            }
+            else
+            {
+                Util.ExecuteQuery(DeactivateUserQuery(id));
+                gvAdvertiserUsers.DataBind();
+                ControlVisible(false, false, false);
+            }
         }
     }
 }

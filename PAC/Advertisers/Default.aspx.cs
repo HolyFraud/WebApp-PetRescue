@@ -31,6 +31,23 @@ namespace PAC.Advertisers
             return "UPDATE AdvertiserUserList SET LastLogin = '" + Util.GetCurrentDateTime() + "' WHERE EmailAddress = '" + txtUsername.Text + "'";
         }
 
+        private string QueryGetSecurityMask()
+        {
+            return "Select SecurityMask From AdvertiserUserList Where EmailAddress = '" + txtUsername.Text + "'";
+        }
+
+        private int GetSecurityMask()
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(QueryGetSecurityMask(), conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            int res = Convert.ToInt32(reader[0]);
+            conn.Close();
+            return res;
+        }
+
         private bool LoginBool()
         {
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
@@ -68,8 +85,10 @@ namespace PAC.Advertisers
         {
             if (LoginBool())
             {
+                Session["CurrentUserSecurityMask"] = GetSecurityMask();
                 UpdateLastLoginDateTime();
                 PassAdvertiserInfoValue();
+                
             }
             else
             {

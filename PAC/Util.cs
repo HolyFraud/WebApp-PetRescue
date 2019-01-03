@@ -17,7 +17,7 @@ namespace PAC
 
         static List<int> indexList = new List<int>();
         public static List<Control> controlList = new List<Control>();
-
+        public static int AcitveMeFlag = 0;
 
         public static void SendEmail(string email, string body)
         {
@@ -67,6 +67,16 @@ namespace PAC
             }
             conn.Close();
             return false;
+        }
+
+        public static bool RecordStatusActive(string email, string table_name, string column_name)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand("Select RecordStatus From " + table_name + " Where " + column_name + " = '" + email + "'", conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            return (bool)reader[0];
         }
 
         public static bool ExistCompany(string command)
