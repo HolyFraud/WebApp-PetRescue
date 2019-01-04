@@ -78,6 +78,12 @@
                 of
                 <asp:TextBox ID="tbPostCode" placeholder="PostCode"  runat="server"></asp:TextBox>
             </aside>
+            <aside>
+                <asp:CheckBoxList ID="cblStateList" runat="server" DataSourceID="StateListDataSource" DataTextField="State" DataValueField="State"></asp:CheckBoxList>
+                <asp:SqlDataSource ID="StateListDataSource" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+                    SelectCommand="SELECT DISTINCT State FROM SuburbList"></asp:SqlDataSource>
+            </aside>
 
             
             <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click"/>

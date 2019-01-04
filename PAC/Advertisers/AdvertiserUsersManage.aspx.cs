@@ -437,6 +437,20 @@ namespace PAC.Advertisers
             }
         }
         
+        private int Row_Index(object sender)
+        {
+            GridViewRow row = ((sender as Button).NamingContainer) as GridViewRow;
+            return row.RowIndex;
+        }
+
+        private void UpdateButtonCall()
+        {
+            CheckBox chk = fvUserInfo.FindControl("IsAdminCheckBox") as CheckBox;
+            if (chk.Checked)
+            {
+                Util.ExecuteQuery(UpdateAdsUserSecurityMask(63, Session["SelectedAdsUserID"].ToString()));
+            }
+        }
 
         protected void Button_Command(object sender, CommandEventArgs e)
         {
@@ -456,20 +470,14 @@ namespace PAC.Advertisers
                     ControlVisible(false, false, false);
                     break;
                 case "Update":
-                    CheckBox chk = fvUserInfo.FindControl("IsAdminCheckBox") as CheckBox;
-                    if (chk.Checked)
-                    {
-                        Util.ExecuteQuery(UpdateAdsUserSecurityMask(63, Session["SelectedAdsUserID"].ToString()));
-                    }
+                    UpdateButtonCall();
                     break;
                 case "BtnDelete":
-                    GridViewRow row = ((sender as Button).NamingContainer) as GridViewRow;
-                    string id = gvAdvertiserUsers.DataKeys[row.RowIndex].Values[0].ToString();
+                    string id = gvAdvertiserUsers.DataKeys[Row_Index(sender)].Values[0].ToString();
                     BtnDeleteCall(sender, id);
                     break;
                 case "BtnDetail":
-                    GridViewRow row1 = ((sender as Button).NamingContainer) as GridViewRow;
-                    Session["SelectedAdsUserID"] = gvAdvertiserUsers.DataKeys[row1.RowIndex].Value;
+                    Session["SelectedAdsUserID"] = gvAdvertiserUsers.DataKeys[Row_Index(sender)].Value;
                     fvUserInfo.Visible = true;
                     break;
                 case "BtnAdd":

@@ -103,6 +103,24 @@ namespace PAC {
         protected global::System.Web.UI.WebControls.TextBox tbPostCode;
         
         /// <summary>
+        /// cblStateList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblStateList;
+        
+        /// <summary>
+        /// StateListDataSource control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.SqlDataSource StateListDataSource;
+        
+        /// <summary>
         /// btnSearch control.
         /// </summary>
         /// <remarks>
