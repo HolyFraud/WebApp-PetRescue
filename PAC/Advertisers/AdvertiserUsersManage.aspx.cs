@@ -73,6 +73,11 @@ namespace PAC.Advertisers
             return "Update AdvertiserUserList Set RecordStatus = 0 Where AdvertiserUserListID = " + id;
         }
 
+        private string UpdateAdsUserSecurityMask(int securitymask, string id)
+        {
+            return "Update AdvertiserUserList Set SecurityMask = " + securitymask + " Where AdvertiserUserListID = " + id;
+        }
+
         private void ExecuteInsertNewUserQuery()
         {
             Util.ExecuteQuery(InsertNewAdsUserQuery());
@@ -150,6 +155,17 @@ namespace PAC.Advertisers
             return 1;
         }
 
+        private void Calculator(int securitymask, CheckBoxList cbl)
+        {
+            foreach (ListItem item in cbl.Items)
+            {
+                if (item.Selected)
+                {
+                    securitymask += Convert.ToInt32(item.Value);
+                }
+            }
+        }
+
         private int CalculateSecurityMask()
         {
             int securitymask = 0;
@@ -159,13 +175,7 @@ namespace PAC.Advertisers
             }
             else
             {
-                foreach (ListItem item in cblAuthControl.Items)
-                {
-                    if (item.Selected)
-                    {
-                        securitymask += Convert.ToInt32(item.Value);
-                    }
-                }
+                Calculator(securitymask, cblAuthControl);
             }
             return securitymask;
         }
@@ -288,8 +298,6 @@ namespace PAC.Advertisers
             lbStep1.BackColor = color1;
             lbStep2.BackColor = color2;
         }
-
-        
         
         private bool NoItemChecked()
         {
@@ -310,25 +318,10 @@ namespace PAC.Advertisers
             return true;
         }
         
-        protected void BtnNext_Click(object sender, EventArgs e)
-        {
-            ControlVisible(false, true, true);
-            ControlLabelHighlight(Color.White, Color.Blue);
 
-        }
+        
 
-        protected void BtnAdd_Click(object sender, EventArgs e)
-        {
-            ControlVisible(true, false, true);
-            ControlLabelHighlight(Color.Blue, Color.White);
-        }
-
-        protected void BtnCancel_Click(object sender, EventArgs e)
-        {
-            ControlVisible(false, false, false);
-        }
-
-        protected void BtnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click()
         {
             if (NoItemChecked())
             {
@@ -385,10 +378,15 @@ namespace PAC.Advertisers
             return true;
         }
 
-        protected void BtnDelete_Click(object sender, EventArgs e)
+        private void HideAuthEditButton()
         {
-            GridViewRow row = ((sender as Button).NamingContainer) as GridViewRow;
-            string id = gvAdvertiserUsers.DataKeys[row.RowIndex].Values[0].ToString();
+            Button btn = fvUserInfo.FindControl("BtnChangeAuth") as Button;
+            CheckBox chk = fvUserInfo.FindControl("IsAdminCheckBox") as CheckBox;
+            
+        }
+        
+        private void BtnDeleteCall(object sender, string id)
+        {
             if (!CanDeleteUsers(sender, id))
             {
                 LbMessege.Visible = true;
@@ -399,6 +397,99 @@ namespace PAC.Advertisers
                 Util.ExecuteQuery(DeactivateUserQuery(id));
                 gvAdvertiserUsers.DataBind();
                 ControlVisible(false, false, false);
+            }
+        }
+        
+        private void BtnChangeAuthCall()
+        {
+            CheckBox chk = fvUserInfo.FindControl("IsAdminCheckBox") as CheckBox;
+            if (chk.Checked)
+            {
+                LbMessege.Visible = true;
+                LbMessege.Text = "Admin Already Has Full Control...!";
+            }
+            else PlAdsUserEditAuth.Visible = true;
+        }
+
+        private bool NoItemSelected()
+        {
+            foreach (ListItem item in cblAdsEditUserAuth.Items)
+            {
+                if (item.Selected) return false;
+            }
+            return true;
+        }
+
+        private void BtnAuthSaveCall()
+        {
+            int securitymask = 0;
+            if (NoItemSelected()) LbMessege.Text = "Please Choose At Least One...!";
+            else
+            {
+                foreach (ListItem item in cblAdsEditUserAuth.Items)
+                {
+                    if (item.Selected) securitymask += Convert.ToInt32(item.Value);
+                }
+                Util.ExecuteQuery(UpdateAdsUserSecurityMask(securitymask, Session["SelectedAdsUserID"].ToString()));
+                LbMessege.Visible = true;
+                LbMessege.Text = "Auth Change Successfully...!";
+                PlAdsUserEditAuth.Visible = false;
+            }
+        }
+        
+
+        protected void Button_Command(object sender, CommandEventArgs e)
+        {
+            switch (e.CommandName)
+            {
+                case "BtnAdsUserEdit":
+                    fvUserInfo.ChangeMode(FormViewMode.Edit);
+                    break;
+                case "BtnNext":
+                    ControlVisible(false, true, true);
+                    ControlLabelHighlight(Color.White, Color.Blue);
+                    break;
+                case "BtnSave":
+                    BtnSave_Click();
+                    break;
+                case "BtnCancel":
+                    ControlVisible(false, false, false);
+                    break;
+                case "Update":
+                    CheckBox chk = fvUserInfo.FindControl("IsAdminCheckBox") as CheckBox;
+                    if (chk.Checked)
+                    {
+                        Util.ExecuteQuery(UpdateAdsUserSecurityMask(63, Session["SelectedAdsUserID"].ToString()));
+                    }
+                    break;
+                case "BtnDelete":
+                    GridViewRow row = ((sender as Button).NamingContainer) as GridViewRow;
+                    string id = gvAdvertiserUsers.DataKeys[row.RowIndex].Values[0].ToString();
+                    BtnDeleteCall(sender, id);
+                    break;
+                case "BtnDetail":
+                    GridViewRow row1 = ((sender as Button).NamingContainer) as GridViewRow;
+                    Session["SelectedAdsUserID"] = gvAdvertiserUsers.DataKeys[row1.RowIndex].Value;
+                    fvUserInfo.Visible = true;
+                    break;
+                case "BtnAdd":
+                    ControlVisible(true, false, true);
+                    ControlLabelHighlight(Color.Blue, Color.White);
+                    break;
+                case "BtnChangeAuth":
+                    BtnChangeAuthCall();
+                    break;
+                case "BtnAuthCancel":
+                    PlAdsUserEditAuth.Visible = false;
+                    break;
+                case "BtnAuthSave":
+                    BtnAuthSaveCall();
+                    break;
+                case "BtnCancelAuth":
+                    fvUserInfo.Visible = false;
+                    LbMessege.Visible = false;
+                    break;
+                default:break;
             }
         }
     }

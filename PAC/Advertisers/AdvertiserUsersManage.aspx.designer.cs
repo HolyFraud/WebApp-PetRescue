@@ -49,6 +49,51 @@ namespace PAC.Advertisers {
         protected global::System.Web.UI.WebControls.Button BtnAdd;
         
         /// <summary>
+        /// fvUserInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.FormView fvUserInfo;
+        
+        /// <summary>
+        /// PlAdsUserEditAuth control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PlAdsUserEditAuth;
+        
+        /// <summary>
+        /// cblAdsEditUserAuth control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList cblAdsEditUserAuth;
+        
+        /// <summary>
+        /// BtnAuthSave control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnAuthSave;
+        
+        /// <summary>
+        /// BtnAuthCancel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnAuthCancel;
+        
+        /// <summary>
         /// PlSteps control.
         /// </summary>
         /// <remarks>

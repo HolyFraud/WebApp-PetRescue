@@ -11,7 +11,24 @@
             <asp:SessionParameter Name="AdvertiserListID" SessionField="AdsListID" Type="Int64" />
         </SelectParameters>
     </asp:SqlDataSource>
-    <asp:SqlDataSource ID="SqlDataSource2" runat="server"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="SqlDataSource2" runat="server" 
+        ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+        SelectCommand="SELECT [AdvertiserUserListID], [FirstName], [LastName], [EmailAddress], [Phone1], [Phone2], [IsAdmin], [Password] FROM [AdvertiserUserList] WHERE ([AdvertiserUserListID] = @AdvertiserUserListID)" UpdateCommand="UPDATE AdvertiserUserList SET FirstName = @FirstName, LastName = @LastName, EmailAddress = @EmailAddress, Phone1 = @Phone1, Phone2 = @Phone2, IsAdmin = @IsAdmin, Password = @Password WHERE (AdvertiserUserListID = @AdvertiserUserListID)"
+        >
+        <SelectParameters>
+            <asp:SessionParameter Name="AdvertiserUserListID" SessionField="SelectedAdsUserID" Type="Int64" />
+        </SelectParameters>
+        <UpdateParameters>
+            <asp:Parameter Name="FirstName" />
+            <asp:Parameter Name="LastName" />
+            <asp:Parameter Name="EmailAddress" />
+            <asp:Parameter Name="Phone1" />
+            <asp:Parameter Name="Phone2" />
+            <asp:Parameter Name="IsAdmin" />
+            <asp:Parameter Name="Password" />
+            <asp:Parameter Name="AdvertiserUserListID" />
+        </UpdateParameters>
+    </asp:SqlDataSource>
     <section class="cover">
 
     <div>
@@ -32,18 +49,93 @@
                 <asp:CheckBoxField DataField="IsAdmin" HeaderText="IsAdmin" SortExpression="IsAdmin" />
                 <asp:TemplateField>
                     <ItemTemplate>
-                        <asp:Button ID="BtnDetail" runat="server" Text="Details" />
+                        <asp:Button ID="BtnDetail" runat="server" Text="Details" CommandName="BtnDetail" OnCommand="Button_Command"/>
                     </ItemTemplate>
 
                 </asp:TemplateField>
                 <asp:TemplateField ShowHeader="False">
                     <ItemTemplate>
-                        <asp:Button ID="BtnDelete" runat="server" CausesValidation="false" Text="Delete" OnClick="BtnDelete_Click"/>
+                        <asp:Button ID="BtnDelete" runat="server" CausesValidation="false" CommandName="BtnDelete" OnCommand="Button_Command" Text="Delete"/>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
         </asp:GridView>
-        <asp:Button ID="BtnAdd" runat="server" Text="Add New User" OnClick="BtnAdd_Click" Visible="true"/>
+        <asp:Button ID="BtnAdd" runat="server" Text="Add New User" CommandName="BtnAdd" OnCommand="Button_Command" Visible="true" />
+        <asp:FormView ID="fvUserInfo" runat="server" 
+            DataKeyNames="AdvertiserUserListID" 
+            DataSourceID="SqlDataSource2"
+            Visible="False">
+            <EditItemTemplate>
+                AdvertiserUserListID:
+                <asp:Label ID="AdvertiserUserListIDLabel1" runat="server" Text='<%# Eval("AdvertiserUserListID") %>' />
+                <br />
+                FirstName:
+                <asp:TextBox ID="FirstNameTextBox" runat="server" Text='<%# Bind("FirstName") %>' />
+                <br />
+                LastName:
+                <asp:TextBox ID="LastNameTextBox" runat="server" Text='<%# Bind("LastName") %>' />
+                <br />
+                EmailAddress:
+                <asp:TextBox ID="EmailAddressTextBox" runat="server" Text='<%# Bind("EmailAddress") %>' />
+                <br />
+                Phone1:
+                <asp:TextBox ID="Phone1TextBox" runat="server" Text='<%# Bind("Phone1") %>' />
+                <br />
+                Phone2:
+                <asp:TextBox ID="Phone2TextBox" runat="server" Text='<%# Bind("Phone2") %>' />
+                <br />
+                IsAdmin:
+                <asp:CheckBox ID="IsAdminCheckBox" runat="server" Checked='<%# Bind("IsAdmin") %>' />
+                <br />
+                Password:
+                <asp:TextBox ID="PasswordTextBox" runat="server" Text='<%# Bind("Password") %>' />
+                <br />
+                <asp:LinkButton ID="UpdateButton" runat="server" CausesValidation="True" CommandName="Update" Text="Update" OnCommand="Button_Command"/>
+                &nbsp;<asp:LinkButton ID="UpdateCancelButton" runat="server" CausesValidation="False" CommandName="Cancel" Text="Cancel" />
+            </EditItemTemplate>
+            <ItemTemplate>
+                AdvertiserUserListID:
+                <asp:Label ID="AdvertiserUserListIDLabel" runat="server" Text='<%# Eval("AdvertiserUserListID") %>' />
+                <br />
+                FirstName:
+                <asp:Label ID="FirstNameLabel" runat="server" Text='<%# Bind("FirstName") %>' />
+                <br />
+                LastName:
+                <asp:Label ID="LastNameLabel" runat="server" Text='<%# Bind("LastName") %>' />
+                <br />
+                EmailAddress:
+                <asp:Label ID="EmailAddressLabel" runat="server" Text='<%# Bind("EmailAddress") %>' />
+                <br />
+                Phone1:
+                <asp:Label ID="Phone1Label" runat="server" Text='<%# Bind("Phone1") %>' />
+                <br />
+                Phone2:
+                <asp:Label ID="Phone2Label" runat="server" Text='<%# Bind("Phone2") %>' />
+                <br />
+                IsAdmin:
+                <asp:CheckBox ID="IsAdminCheckBox" runat="server" Checked='<%# Bind("IsAdmin") %>' Enabled="false" />
+                <br />
+                Password:
+                <asp:Label ID="PasswordLabel" runat="server" Text='<%# Bind("Password") %>'/>
+                <br />
+                <asp:Button ID="BtnEdit" runat="server" CausesValidation="False" Text="Edit Info" CommandName="BtnAdsUserEdit" OnCommand="Button_Command"/>
+                <asp:Button ID="BtnChangeAuth" runat="server" Text="Edit Auth" CommandName="BtnChangeAuth" OnCommand="Button_Command"/>
+                <asp:Button ID="BtnAuthCancel" runat="server" Text="Cancel" CommandName="BtnCancelAuth" OnCommand="Button_Command"/>
+            </ItemTemplate>
+        </asp:FormView>
+        <asp:Panel ID="PlAdsUserEditAuth" runat="server" Visible="false">
+            <asp:CheckBoxList ID="cblAdsEditUserAuth" runat="server">
+                <asp:ListItem Value="1">Can Add Users</asp:ListItem>
+                <asp:ListItem Value="2">Can Edit Users</asp:ListItem>
+                <asp:ListItem Value="4">Can Delete Users</asp:ListItem>
+                <asp:ListItem Value="8">Can Add Ads</asp:ListItem>
+                <asp:ListItem Value="16">Can Edit Ads</asp:ListItem>
+                <asp:ListItem Value="32">Can Delete Ads</asp:ListItem>
+            </asp:CheckBoxList>
+            <asp:Button ID="BtnAuthSave" runat="server" Text="Save" CommandName="BtnAuthSave" OnCommand="Button_Command"/>
+            <asp:Button ID="BtnAuthCancel" runat="server" Text="Cancel" CommandName="BtnAuthCancel" OnCommand="Button_Command"/>
+            
+        </asp:Panel>
     </div>
         <asp:Panel ID="PlSteps" runat="server">
             <asp:Label ID="lbStep1" runat="server" Text="Step 1" Visible="false"></asp:Label>
@@ -88,9 +180,9 @@
             </asp:CheckBoxList>
         </asp:Panel>
         <asp:Panel ID="Plbtn" runat="server">
-            <asp:Button ID="BtnNext" runat="server" Text="Next" CssClass="btnstyle" OnClick="BtnNext_Click" ValidationGroup="UserValidationGroup" Visible="false"/>
-            <asp:Button ID="BtnSave" runat="server" Text="Save" CssClass="btnstyle" OnClick="BtnSave_Click" ValidationGroup="UserValidationGroup" Visible="false"/>
-            <asp:Button ID="BtnCancel" runat="server" Text="Cancel" CssClass="btnstyle" OnClick="BtnCancel_Click" Visible="false"/>
+            <asp:Button ID="BtnNext" runat="server" Text="Next" CssClass="btnstyle" CommandName="BtnNext" OnCommand="Button_Command" ValidationGroup="UserValidationGroup" Visible="false"/>
+            <asp:Button ID="BtnSave" runat="server" Text="Save" CssClass="btnstyle" CommandName="BtnSave" OnCommand="Button_Command" ValidationGroup="UserValidationGroup" Visible="false"/>
+            <asp:Button ID="BtnCancel" runat="server" Text="Cancel" CssClass="btnstyle" CommandName="BtnCancel" OnCommand="Button_Command" Visible="false"/>
         </asp:Panel>
         <asp:Label ID="LbMessege" runat="server" Text="Label" Visible="false"></asp:Label>
     </div>
