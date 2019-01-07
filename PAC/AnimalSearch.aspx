@@ -72,7 +72,8 @@
                 <asp:DropDownList ID="ddlRange" runat="server" >
                     <asp:ListItem Selected="True" Value="10">10Km</asp:ListItem>
                     <asp:ListItem Value="30">30Km</asp:ListItem>
-                    <asp:ListItem Value="50">50KM</asp:ListItem>
+                    <asp:ListItem Value="50">50Km</asp:ListItem>
+                    <asp:ListItem Value="100">100Km</asp:ListItem>
                 
                 </asp:DropDownList>
                 of

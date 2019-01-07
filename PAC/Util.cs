@@ -108,14 +108,6 @@ namespace PAC
             dob = dob.Remove(foundIndex);
             return dob;
         }
-
-        public static string SelectCommand()
-        {
-            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, " +
-                            "AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON " +
-                            "AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON " +
-                            "AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID";
-        }
         
         
         public static string GetQuestionType(string questionTypeListID)

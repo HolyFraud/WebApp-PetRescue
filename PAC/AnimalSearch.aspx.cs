@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -14,7 +16,6 @@ namespace PAC
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
                 getSessionSelection();
@@ -172,25 +173,114 @@ namespace PAC
             return ageCondition;
         }
 
+        private string StateStatement(CheckBoxList cblState)
+        {
+            if (string.IsNullOrEmpty(tbPostCode.Text))
+            {
+                List<string> stateList = new List<string>();
+                string stateCondition = "";
+                string stateSelected = cblState.SelectedValue;
+                foreach (ListItem item in cblState.Items)
+                {
+                    if (item.Selected)
+                    {
+                        stateList.Add(item.Value);
+                    }
+                }
+                if (cblState.SelectedIndex == -1)
+                {
+                    stateCondition = " AND State NOT IN ('')";
+                }
+                else if (stateList.Count == 1)
+                {
+                    stateCondition = " AND State = '" + cblState.SelectedValue + "'";
+                }
+                else if (stateList.Count > 1)
+                {
+                    for (int i = 0; i < stateList.Count; i++)
+                    {
+                        if (i == 0)
+                        {
+                            stateCondition = " AND State IN ('" + stateList[i];
+                        }
+                        else if (i == stateList.Count - 1)
+                        {
+                            stateCondition += "', '" + stateList[i] + "')";
+                        }
+                        else
+                        {
+                            stateCondition += "', '" + stateList[i];
+                        }
+                    }
+                }
+                return stateCondition;
+            }
+            return null;
+        }
+
+        private string PostCode()
+        {
+            return tbPostCode.Text;
+        }
+
+        private string PcodeDistance()
+        {
+            return ddlRange.SelectedValue;
+        }
+
+
+        private string SelectCommand()
+        {
+            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, " +
+                                "AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON " +
+                                "AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON " +
+                                "AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList ON " +
+                                "AnimalList.SuburbListID = SuburbList.SuburbListID";
+        }
+
+        private RootObject GetJSONObject()
+        {
+            var webClient = new WebClient();
+            string rowJSON = webClient.DownloadString("https://maps.googleapis.com/maps/api/geocode/json?address=" + tbPostCode.Text + ",+AU&key=AIzaSyAEwsGJsYxlLkADDUif5oZ1oy7UG9VXOic");
+            RootObject item = JsonConvert.DeserializeObject<RootObject>(rowJSON);
+            return item;
+        }
+
+        private string QueryGetAnimalListByPostCodeDistance(string distance)
+        {
+            double lat = GetJSONObject().results[0].geometry.location.lat;
+            double lng = GetJSONObject().results[0].geometry.location.lng;
+            return "DECLARE @GEO1 GEOGRAPHY, @LAT VARCHAR(10), @LONG VARCHAR(10) SET @LAT='" + lat + "' SET @LONG='" + lng + "' SET @geo1= geography::Point(@LAT, @LONG, 4326) SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList ON AnimalList.SuburbListID = SuburbList.SuburbListID where(@geo1.STDistance(geography::Point(ISNULL(GPSLat, 0), ISNULL(GPSLon, 0), 4326)) / 1000) < " + distance;
+            
+        }
+
+        /*--------------------------------Order Function Below---------------------------------------------------------------------------*/
+
         private string orderByStatement()
         {
             return " Orderby " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
             
         }
 
-        public void BindSql(string statSpecies, string statSex, string statAge, string statBreed)
+        public void BindSql(string statSpecies, string statSex, string statAge, string statBreed, string statState)
         {
             int i = rblSpecies.SelectedIndex;
-            if (cblSex.SelectedIndex == -1 && cblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null)
+            if (cblSex.SelectedIndex == -1 && cblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
             {
-                SqlDataSource1.SelectCommand = Util.SelectCommand();
+                SqlDataSource1.SelectCommand = SelectCommand();
+                SqlDataSource1.DataBind();
+                lvAnimalList.DataBind();
+            }
+            else if (string.IsNullOrEmpty(tbPostCode.Text))
+            {
+                SqlDataSource1.SelectCommand = SelectCommand()+ " WHERE " + statSpecies + statSex + statAge + statBreed + statState;
+
                 SqlDataSource1.DataBind();
                 lvAnimalList.DataBind();
             }
             else
             {
-                SqlDataSource1.SelectCommand = Util.SelectCommand()+ " WHERE " + statSpecies + statSex + statAge + statBreed;
-
+                SqlDataSource1.SelectCommand = QueryGetAnimalListByPostCodeDistance(ddlRange.SelectedValue) + " AND " + statSpecies + statSex + statAge + statBreed + statState;
                 SqlDataSource1.DataBind();
                 lvAnimalList.DataBind();
             }
@@ -207,7 +297,7 @@ namespace PAC
         private void filterInfo()
         {
             
-            BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(cblAge), breedStatement(cblBreed));
+            BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(cblAge), breedStatement(cblBreed), StateStatement(cblStateList));
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)

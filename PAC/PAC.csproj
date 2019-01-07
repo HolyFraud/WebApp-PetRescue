@@ -44,6 +44,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -103,6 +106,7 @@
     <Content Include="Image\MP-dog2.jpg" />
     <Content Include="Image\MP-dog3.jpg" />
     <Content Include="Image\Panel copy.png" />
+    <Content Include="JSONTest.aspx" />
     <Content Include="JS\AnimalAdoption.js" />
     <Content Include="JS\AnimalSearchjs.js" />
     <Content Include="JS\bootstrap.js" />
@@ -136,6 +140,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JSONObject.cs" />
     <Compile Include="Advertisers\AdvertiserHome.aspx.cs">
       <DependentUpon>AdvertiserHome.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -208,6 +213,13 @@
     </Compile>
     <Compile Include="DBManager.cs" />
     <Compile Include="Includes.cs" />
+    <Compile Include="JSONTest.aspx.cs">
+      <DependentUpon>JSONTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="JSONTest.aspx.designer.cs">
+      <DependentUpon>JSONTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="LoginChoice.aspx.cs">
       <DependentUpon>LoginChoice.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
