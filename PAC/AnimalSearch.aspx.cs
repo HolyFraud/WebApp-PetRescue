@@ -56,7 +56,8 @@ namespace PAC
             }
             if (sexList.Count > 1 || thisCblSex.SelectedIndex == -1)
             {
-                sexCondition = " AND Sex NOT IN ('')";
+                return null;
+                //sexCondition = " AND Sex NOT IN ('')";
             }
             else
             {
@@ -101,7 +102,8 @@ namespace PAC
             }
             if (thisCbl.SelectedIndex == -1)
             {
-                breedCondition = " AND AnimalBreed NOT IN ('')";
+                return null;
+                //breedCondition = " AND AnimalBreed NOT IN ('')";
             }
             else if (breedList.Count == 1)
             {
@@ -145,7 +147,7 @@ namespace PAC
             }
             if (thisCblAge.SelectedIndex == -1)
             {
-                ageCondition = " AND Age NOT IN ('')";
+                return null;
             }
             else if (ageList.Count == 1)
             {
@@ -189,7 +191,8 @@ namespace PAC
                 }
                 if (cblState.SelectedIndex == -1)
                 {
-                    stateCondition = " AND State NOT IN ('')";
+                    return null;
+                    //stateCondition = " AND State NOT IN ('')";
                 }
                 else if (stateList.Count == 1)
                 {
