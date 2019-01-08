@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -16,6 +19,7 @@ namespace PAC
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            
             if (!IsPostBack)
             {
                 getSessionSelection();
@@ -71,19 +75,7 @@ namespace PAC
 
         private string speciesStatement(RadioButtonList thisRblSpecies)
         {
-            
-            string speciesCondition = "";
-            ListItem li = thisRblSpecies.SelectedItem;
-            if (thisRblSpecies.SelectedItem == null)
-            {
-                speciesCondition = " AnimalType NOT IN ('')";
-            }
-            else
-            {
-                speciesCondition = " AnimalType = '" + thisRblSpecies.SelectedItem.Text + "'";
-            }
-            
-            return speciesCondition;
+            return thisRblSpecies.SelectedItem == null ? " AnimalType NOT IN ('')" : " AnimalType = '" + thisRblSpecies.SelectedItem.Text + "'";
         }
 
 
@@ -133,46 +125,10 @@ namespace PAC
 
         
 
-        public string ageStatement(CheckBoxList thisCblAge)
+        public string ageStatement(RadioButtonList thisRblAge)
         {
-            List<string> ageList = new List<string>();
-            string sltAge = thisCblAge.SelectedValue;
-            string ageCondition = "";
-            for (int i = 0; i < thisCblAge.Items.Count; i++)
-            {
-                if (thisCblAge.Items[i].Selected)
-                {
-                    ageList.Add(thisCblAge.Items[i].Value);
-                }
-            }
-            if (thisCblAge.SelectedIndex == -1)
-            {
-                return null;
-            }
-            else if (ageList.Count == 1)
-            {
-                ageCondition = " AND Age " + sltAge;
+            return rblAge.SelectedIndex == -1 ? null : " And Age " + thisRblAge.SelectedValue;
 
-            }
-            else if (ageList.Count > 1)
-            {
-                for (int j = 0; j < ageList.Count; j++)
-                {
-                    if (j == 0)
-                    {
-                        ageCondition = " AND (Age " + ageList[j];
-                    }
-                    else if (j == ageList.Count - 1)
-                    {
-                        ageCondition += " OR Age " + ageList[j] + ")";
-                    }
-                    else
-                    {
-                        ageCondition += " OR Age " + ageList[j];
-                    }
-                }
-            }
-            return ageCondition;
         }
 
         private string StateStatement(CheckBoxList cblState)
@@ -268,7 +224,7 @@ namespace PAC
         public void BindSql(string statSpecies, string statSex, string statAge, string statBreed, string statState)
         {
             int i = rblSpecies.SelectedIndex;
-            if (cblSex.SelectedIndex == -1 && cblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
+            if (cblSex.SelectedIndex == -1 && rblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
             {
                 SqlDataSource1.SelectCommand = SelectCommand();
                 SqlDataSource1.DataBind();
@@ -300,12 +256,12 @@ namespace PAC
         private void filterInfo()
         {
             
-            BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(cblAge), breedStatement(cblBreed), StateStatement(cblStateList));
+            BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(rblAge), breedStatement(cblBreed), StateStatement(cblStateList));
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            
+            InsertSearchActionCollection();
         }
         
 
@@ -354,5 +310,140 @@ namespace PAC
             Session["AnimalListID"] = lbID.Text;
             Response.Redirect("/AnimalAdoption.aspx");
         }
+
+        /*------------------------------------------Get Public User Search Item Collection------------------------------------------*/
+
+        private string QueryGetAnimalTypeListID(string type)
+        {
+            return "Select AnimalTypeListID From AnimalTypeList Where AnimalType = '" + type + "'";
+        }
+
+        private string QueryGetAnimalBreedListID(string breed)
+        {
+            return "Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + breed + "'";
+        }
+
+        private string QueryInsertAnimalBreed(string breedid, string searchid)
+        {
+            return "Insert Into MemberSearchHistoryBreedItemList Values (" + breedid + ", " + searchid + ")";
+        }
+
+        private string QueryInsertState(string searchid, string state)
+        {
+            return "Insert Into MemberSearchHistoryStateList Values (" + searchid + ", '" + state + "')";
+        }
+        
+        private string QueryInsertMemberSearchHistory(string memberid, string typeid, string agefrom, string ageto, string postcode, string postrange)
+        {
+            return "Insert Into MemberSearchHistoryList (MemberListID, AnimalTypeListID, AgeFrom, AgeTo, PostCode, PostCodeRange) Values(" + memberid + ", " + typeid + ", " + agefrom + ", " + ageto + ", " + postcode + ", " + postrange + ")";
+        }
+
+        private string QueryGetCurrentMemberSearchHistoryListID(string memberid, string typeid, string agefrom, string ageto, string postcode, string postrange)
+        {
+            return "Insert Into MemberSearchHistoryList (MemberListID, AnimalTypeListID, AgeFrom, AgeTo, PostCode, PostCodeRange) Values(" + memberid + ", " + typeid + ", " + agefrom + ", " + ageto + ", " + postcode + ", " + postrange + ") select SCOPE_IDENTITY()";
+        }
+        
+        
+        private string GetFirstResByRunningQuery(string query)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(query, conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            return reader[0].ToString();
+        }
+        
+        
+
+        private string GetMemberListID()
+        {
+            return null == Session["MemberMemberListID"] ? "0" : Session["MemberMemberListID"].ToString();
+        }
+
+        private string GetAnimalTypeListID()
+        {
+            return rblSpecies.SelectedIndex == -1 ? "0" : GetFirstResByRunningQuery(QueryGetAnimalTypeListID(rblSpecies.SelectedItem.Text));
+        }
+
+        private string GetAgeFrom()
+        {
+            if (rblAge.SelectedIndex == -1) return "NULL";
+            else
+            {
+                if (rblAge.Items[0].Selected) return "0";
+                if (rblAge.Items[1].Selected) return "1";
+                if (rblAge.Items[2].Selected) return "6";
+                if (rblAge.Items[3].Selected) return "10";
+            }
+            return "NULL";
+        }
+
+        private string GetAgeTo()
+        {
+            if (rblAge.SelectedIndex == -1) return "NULL";
+            else
+            {
+                if (rblAge.Items[0].Selected) return "1";
+                if (rblAge.Items[1].Selected) return "5";
+                if (rblAge.Items[2].Selected) return "10";
+                if (rblAge.Items[3].Selected) return "NULL";
+            }
+            return "NULL";
+        }
+
+        private string GetPostCode()
+        {
+            if(string.IsNullOrEmpty(tbPostCode.Text.Trim()))
+            {
+                return "NULL";
+            }
+            else
+            {
+                return tbPostCode.Text;
+            }
+        }
+        
+        private string GetPostCodeRange()
+        {
+            return string.IsNullOrEmpty(tbPostCode.Text.Trim()) ? "NULL" : ddlRange.SelectedValue;
+        }
+
+        private void InsertSearchAnimalBreed()
+        {
+            
+                foreach (ListItem item in cblBreed.Items)
+                {
+                    if (item.Selected)
+                        Util.ExecuteQuery(QueryInsertAnimalBreed(GetFirstResByRunningQuery(QueryGetAnimalBreedListID(item.Text)), Session["CurrentSearchID"].ToString()));
+                }
+            
+        }
+
+        private void InsertSearchState()
+        {
+            //if (cblStateList.SelectedIndex == -1)
+            //{
+            //    Util.ExecuteQuery(QueryInsertState(Session["CurrentSearchID"].ToString(), "NULL"));
+            //}
+            //else
+            //{
+                foreach (ListItem item in cblStateList.Items)
+                {
+                    if (item.Selected)
+                        Util.ExecuteQuery(QueryInsertState(Session["CurrentSearchID"].ToString(), item.Value));
+                }
+            //}
+                
+        }
+
+        private void InsertSearchActionCollection()
+        {
+            Session["CurrentSearchID"] = GetFirstResByRunningQuery(QueryGetCurrentMemberSearchHistoryListID(GetMemberListID(), GetAnimalTypeListID(), GetAgeFrom(), GetAgeTo(), GetPostCode(), GetPostCodeRange()));
+            InsertSearchAnimalBreed();
+            InsertSearchState();
+        }
+
+
     }
 }

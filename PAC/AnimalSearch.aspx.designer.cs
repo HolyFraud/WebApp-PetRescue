@@ -76,13 +76,13 @@ namespace PAC {
         protected global::System.Web.UI.WebControls.CheckBoxList cblSex;
         
         /// <summary>
-        /// cblAge control.
+        /// rblAge control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBoxList cblAge;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblAge;
         
         /// <summary>
         /// ddlRange control.
@@ -130,6 +130,15 @@ namespace PAC {
         protected global::System.Web.UI.WebControls.Button btnSearch;
         
         /// <summary>
+        /// lb control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lb;
+        
+        /// <summary>
         /// ddlResultsCount control.
         /// </summary>
         /// <remarks>
@@ -164,14 +173,5 @@ namespace PAC {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ListView lvAnimalList;
-        
-        /// <summary>
-        /// lb control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lb;
     }
 }

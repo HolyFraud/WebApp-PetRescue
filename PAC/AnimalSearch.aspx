@@ -59,13 +59,13 @@
             <aside>
                 <header style="font-size:large">Age</header>
 
-                <asp:CheckBoxList ID="cblAge" runat="server" >
-                    <asp:ListItem Value="&lt; 1">Less than 1 years</asp:ListItem>
-                    <asp:ListItem Value="BETWEEN 1 AND 5">1 ~ 5 years</asp:ListItem>
-                    <asp:ListItem Value="BETWEEN 6 AND 10">6 ~ 10 years</asp:ListItem>
+                <asp:RadioButtonList ID="rblAge" runat="server">
+                    <asp:ListItem Value ="&lt;1">Less than 1 year</asp:ListItem>
+                    <asp:ListItem Value="Between 1 And 5">1 ~ 5 years</asp:ListItem>
+                    <asp:ListItem Value="Between 6 And 10">6 ~ 10 years</asp:ListItem>
                     <asp:ListItem Value="&gt; 10">Greater than 10 years</asp:ListItem>
+                </asp:RadioButtonList>
 
-                </asp:CheckBoxList>
             </aside>
             <aside>
                 <header style="font-size:large">Within</header>
@@ -80,7 +80,12 @@
                 <asp:TextBox ID="tbPostCode" placeholder="PostCode"  runat="server"></asp:TextBox>
             </aside>
             <aside>
-                <asp:CheckBoxList ID="cblStateList" runat="server" DataSourceID="StateListDataSource" DataTextField="State" DataValueField="State"></asp:CheckBoxList>
+                <asp:CheckBoxList ID="cblStateList" runat="server" 
+                    DataSourceID="StateListDataSource"
+                    DataTextField="State"
+                    DataValueField="State">
+
+                </asp:CheckBoxList>
                 <asp:SqlDataSource ID="StateListDataSource" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
                     SelectCommand="SELECT DISTINCT State FROM SuburbList"></asp:SqlDataSource>
@@ -88,6 +93,7 @@
 
             
             <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click"/>
+            <asp:Label ID="lb" runat="server" Text="Label"></asp:Label>
         </div>
 
 
@@ -228,7 +234,7 @@
         </div>
     </div>
 
-        <asp:Label ID="lb" runat="server" Text="wodemaya"></asp:Label>
+        
     </section>
     
 
