@@ -5,10 +5,20 @@
     <script src="JS/AnimalSearchjs.js"></script>
     
     
+    <style type="text/css">
+        .auto-style1 {
+            height: 20px;
+        }
+    </style>
+    
+    
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+        SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
+
+    <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
     <section>
         
@@ -98,18 +108,7 @@
 
 
         <div class="presentbar">
-            <span>
-                <span>Show</span>
-                    <asp:DropDownList ID="ddlResultsCount" runat="server" 
-                        OnSelectedIndexChanged="ddlResultsCount_SelectedIndexChanged" 
-                        AutoPostBack="true">
-                        <asp:ListItem Value="8">8</asp:ListItem>
-                        <asp:ListItem Value="16">16</asp:ListItem>
-                        <asp:ListItem Value="32">32</asp:ListItem>
-                        <asp:ListItem Value="64">64</asp:ListItem>
-                    </asp:DropDownList>
-                <span>pets per page </span>
-            </span>
+            
             <span>
                 <span>Order </span>
                 <asp:DropDownList ID="ddlSortList" runat="server" 
@@ -130,12 +129,84 @@
                 <asp:ListItem Value="DESC">DESC</asp:ListItem>
             </asp:DropDownList><br />
 
+            <telerik:RadGrid ID="rgAnimalList" runat="server" 
+                AutoGenerateColumns="False" 
+                DataSourceID="SqlDataSource3"
+                OnItemDataBound="rgAnimalList_ItemDataBound"
+                AllowPaging="true"
+                AllowSorting="true"
+                HeaderStyle-CssClass="display:none;">
+                <GroupingSettings CollapseAllTooltip="Collapse all groups"></GroupingSettings>
+                <MasterTableView DataKeyNames="AnimalListID" 
+                    DataSourceID="SqlDataSource3"
+                    PageSize="5"
+                    HeaderStyle-CssClass="display:none;">
+                    <PagerStyle Mode="NextPrevAndNumeric" Position="TopAndBottom" />
+                    <NoRecordsTemplate>
+                        <telerik:RadLabel ID="rlb" runat="server" HtmlEncode="True">
+                            No Records Here
+                        </telerik:RadLabel>
+                    </NoRecordsTemplate>
+                    <RowIndicatorColumn Visible="False">
+                    </RowIndicatorColumn>
+                    <ExpandCollapseColumn Created="True">
+                    </ExpandCollapseColumn>
+                    <Columns>
+                        <telerik:GridTemplateColumn FilterControlAltText="Filter TemplateColumn column" UniqueName="TemplateColumn">
+                            <ItemTemplate>
+                                
+                                <table style="width: 50%;">
+                                    <asp:Image ID="AnimalImg" runat="server" />
+                                    <tr>
+                                        <td>Name:</td>
+                                        <td>
+                                            <telerik:RadLabel ID="NameRadLabel" runat="server" Text="NameRadLabel" ForeColor="Black"></telerik:RadLabel>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Age:</td>
+                                        <td>
+                                            <telerik:RadLabel ID="AgeRadLabel" runat="server"></telerik:RadLabel>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sex</td>
+                                        <td><telerik:RadLabel ID="SexRadLabel" runat="server"></telerik:RadLabel></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Type:</td>
+                                        <td><telerik:RadLabel ID="TypeRadLabel" runat="server"></telerik:RadLabel></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Color</td>
+                                        <td><telerik:RadLabel ID="ColorRadLabel" runat="server"></telerik:RadLabel></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Breed</td>
+                                        <td><telerik:RadLabel ID="BreedRadLabel" runat="server"></telerik:RadLabel></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <telerik:RadButton ID="MoreInfoRadBtn" runat="server" Text="More Info"></telerik:RadButton>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ItemTemplate>
+                        </telerik:GridTemplateColumn>
+                    </Columns>
+                </MasterTableView>
+            </telerik:RadGrid>
+
+
+
+
             <asp:ListView ID="lvAnimalList" runat="server" 
                 DataSourceID="SqlDataSource1"
                 DataKeyNames="AnimalListID"
                 GroupItemCount="4" 
                 GroupPlaceholderID="groupPlaceholder" 
-                ItemPlaceholderID="itemPlaceholder">
+                ItemPlaceholderID="itemPlaceholder" 
+                Visible="false">
                 <LayoutTemplate>
                     
                     <asp:DataPager  runat="server" PageSize="8">
