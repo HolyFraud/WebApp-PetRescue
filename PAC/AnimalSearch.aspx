@@ -5,12 +5,6 @@
     <script src="JS/AnimalSearchjs.js"></script>
     
     
-    <style type="text/css">
-        .auto-style1 {
-            height: 20px;
-        }
-    </style>
-    
     
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -18,7 +12,7 @@
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
 
-    <asp:SqlDataSource ID="SqlDataSource3" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
+    <asp:SqlDataSource ID="ResultsSqlDataSource" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
     <section>
         
@@ -129,16 +123,16 @@
                 <asp:ListItem Value="DESC">DESC</asp:ListItem>
             </asp:DropDownList><br />
 
-            <telerik:RadGrid ID="rgAnimalList" runat="server" 
+            <telerik:RadGrid ID="ResultsRadgrid" runat="server" 
                 AutoGenerateColumns="False" 
-                DataSourceID="SqlDataSource3"
+                DataSourceID="ResultsSqlDataSource"
                 OnItemDataBound="rgAnimalList_ItemDataBound"
-                AllowPaging="true"
-                AllowSorting="true"
+                AllowPaging="True"
+                AllowSorting="True"
                 HeaderStyle-CssClass="display:none;">
                 <GroupingSettings CollapseAllTooltip="Collapse all groups"></GroupingSettings>
                 <MasterTableView DataKeyNames="AnimalListID" 
-                    DataSourceID="SqlDataSource3"
+                    DataSourceID="ResultsSqlDataSource"
                     PageSize="5"
                     HeaderStyle-CssClass="display:none;">
                     <PagerStyle Mode="NextPrevAndNumeric" Position="TopAndBottom" />
@@ -160,7 +154,7 @@
                                     <tr>
                                         <td>Name:</td>
                                         <td>
-                                            <telerik:RadLabel ID="NameRadLabel" runat="server" Text="NameRadLabel" ForeColor="Black"></telerik:RadLabel>
+                                            <telerik:RadLabel ID="NameRadLabel" runat="server" ForeColor="Black"></telerik:RadLabel>
                                         </td>
                                     </tr>
                                     <tr>
@@ -194,7 +188,11 @@
                             </ItemTemplate>
                         </telerik:GridTemplateColumn>
                     </Columns>
+
+<HeaderStyle CssClass="display:none;"></HeaderStyle>
                 </MasterTableView>
+
+<HeaderStyle CssClass="display:none;"></HeaderStyle>
             </telerik:RadGrid>
 
 
