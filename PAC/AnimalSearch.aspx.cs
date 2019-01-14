@@ -327,25 +327,7 @@ namespace PAC
             reader.Read();
             Session["CurrentSearchID"] = reader[0];
             reader.Close();
-
-            //insert search animalbreed history
-            //string GetBreedListIDSQL = "Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + breed + "'";
-            //insert animalbreed  "Insert Into MemberSearchHistoryBreedItemList Values (" + breedid + ", " + searchid + ")";
-            //InsertAnimalBreedSearchHistory(conn);
-            //InsertSearchState();
-            // "Insert Into MemberSearchHistoryStateList Values (" + searchid + ", '" + state + "')"
-            //if (cblStateList.SelectedIndex != -1)
-            //{
-            //    foreach (ListItem item in cblStateList.Items)
-            //    {
-            //        if (item.Selected)
-            //            Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", '" + item.Value + "')");
-            //    }
-            //}
-            //else
-            //{
-            //    Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", 'NULL')");
-            //}
+            
         }
 
         private string GetBreedID(ListItem item)
