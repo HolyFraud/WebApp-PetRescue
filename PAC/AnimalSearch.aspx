@@ -13,7 +13,7 @@
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
 
     <asp:SqlDataSource ID="ResultsSqlDataSource" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
-        SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
+        SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID"></asp:SqlDataSource>
     <section>
         
     <div class="container">
@@ -126,10 +126,10 @@
             <telerik:RadGrid ID="ResultsRadgrid" runat="server" 
                 AutoGenerateColumns="False" 
                 DataSourceID="ResultsSqlDataSource"
-                OnItemDataBound="rgAnimalList_ItemDataBound"
+                
                 AllowPaging="True"
                 AllowSorting="True"
-                HeaderStyle-CssClass="display:none;">
+                HeaderStyle-CssClass="display:none;" OnNeedDataSource="Grid_ResultsSqlDataSource">
                 <GroupingSettings CollapseAllTooltip="Collapse all groups"></GroupingSettings>
                 <MasterTableView DataKeyNames="AnimalListID" 
                     DataSourceID="ResultsSqlDataSource"
@@ -151,37 +151,46 @@
                                 
                                 <table style="width: 50%;">
                                     <asp:Image ID="AnimalImg" runat="server" />
+                                    <telerik:RadLabel ID="AnimalListIDRadLabel" runat="server" Text='<%#Eval("AnimalListID") %>' Visible="false"></telerik:RadLabel>
                                     <tr>
                                         <td>Name:</td>
                                         <td>
-                                            <telerik:RadLabel ID="NameRadLabel" runat="server" ForeColor="Black"></telerik:RadLabel>
+                                            <%# Eval("Name") %>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Age:</td>
                                         <td>
-                                            <telerik:RadLabel ID="AgeRadLabel" runat="server"></telerik:RadLabel>
+                                            <%# Eval("Age") %>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Sex</td>
-                                        <td><telerik:RadLabel ID="SexRadLabel" runat="server"></telerik:RadLabel></td>
+                                        <td>
+                                            <%#Eval("Sex") %>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Type:</td>
-                                        <td><telerik:RadLabel ID="TypeRadLabel" runat="server"></telerik:RadLabel></td>
+                                        <td>
+                                            <%#Eval("AnimalType") %>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Color</td>
-                                        <td><telerik:RadLabel ID="ColorRadLabel" runat="server"></telerik:RadLabel></td>
+                                        <td>
+                                            <%#Eval("Color") %>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>Breed</td>
-                                        <td><telerik:RadLabel ID="BreedRadLabel" runat="server"></telerik:RadLabel></td>
+                                        <td>
+                                            <%#Eval("AnimalBreed") %>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <telerik:RadButton ID="MoreInfoRadBtn" runat="server" Text="More Info"></telerik:RadButton>
+                                            <telerik:RadButton ID="MoreInfoRadBtn" runat="server" Text="More Info" OnClick="MoreInfoRadBtn_Click"></telerik:RadButton>
                                         </td>
                                     </tr>
                                 </table>
@@ -198,108 +207,6 @@
 
 
 
-            <asp:ListView ID="lvAnimalList" runat="server" 
-                DataSourceID="SqlDataSource1"
-                DataKeyNames="AnimalListID"
-                GroupItemCount="4" 
-                GroupPlaceholderID="groupPlaceholder" 
-                ItemPlaceholderID="itemPlaceholder" 
-                Visible="false">
-                <LayoutTemplate>
-                    
-                    <asp:DataPager  runat="server" PageSize="8">
-                        <Fields>
-                            
-                            <asp:NextPreviousPagerField ButtonType="Link" ShowFirstPageButton="false" ShowPreviousPageButton="true" ShowNextPageButton="false" />
-                            <asp:NumericPagerField ButtonType="Link" />
-                            <asp:NextPreviousPagerField ButtonType="Link" ShowFirstPageButton="false" ShowPreviousPageButton="false" ShowNextPageButton="true" />
-                        </Fields>
-
-                    </asp:DataPager>
-                    <table>
-                        <asp:PlaceHolder ID="groupPlaceholder" runat="server"></asp:PlaceHolder>
-                    </table>
-
-                    <asp:DataPager ID="dp1" runat="server" PageSize="8">
-                        <Fields>
-                            <asp:NextPreviousPagerField ButtonType="Link" ShowFirstPageButton="false" ShowPreviousPageButton="true" ShowNextPageButton="false" />
-                            <asp:NumericPagerField ButtonType="Link" />
-                            <asp:NextPreviousPagerField ButtonType="Link" ShowFirstPageButton="false" ShowPreviousPageButton="false" ShowNextPageButton="true" />
-                        </Fields>
-
-                    </asp:DataPager>
-                </LayoutTemplate>
-               <GroupTemplate>
-                    <tr>
-                        <asp:PlaceHolder ID="itemPlaceholder" runat="server"></asp:PlaceHolder>
-                    </tr>
-                </GroupTemplate>
-                <ItemTemplate>
-                    <td runat="server" style="">
-                        <table border="1" style="width: 200px; height: 100px;">
-                        <tr style="display:none;">
-                        <td>
-                            <asp:Label ID="lbAnimalListID" runat="server" Text='<%# Eval("AnimalListID") %>' style="display:none;"></asp:Label>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Name: 
-                        </td>
-                        <td>
-                            
-                            <asp:Label ID="NameLabel" runat="server" Text='<%# Eval("Name") %>' />
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Age: 
-                        </td>
-                        <td>
-                            <asp:Label ID="AgeLabel" runat="server" Text='<%# Eval("Age") %>' />
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Sex: 
-                        </td>
-                        <td>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Eval("Sex") %>' />
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Animal Type: 
-                        </td>
-                        <td>
-                            <asp:Label ID="Label2" runat="server" Text='<%# Eval("AnimalType") %>' />
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Color: 
-                        </td>
-                        <td>
-                            <asp:Label ID="Label3" runat="server" Text='<%# Eval("Color") %>' />
-                        </td>
-                        </tr>
-                        <tr>
-                        <td>
-                            Breed: 
-                        </td>
-                        <td>
-                            <asp:Label ID="Label4" runat="server" Text='<%# Eval("AnimalBreed") %>' />
-                        </td>
-                        </tr>
-                        
-                            
-                        
-                        </table>
-                        <asp:LinkButton ID="lbDetails" runat="server" Text="Details" OnClick="lbDetails_Click"></asp:LinkButton>
-                    </td>
-                </ItemTemplate>
-                
-            </asp:ListView>
         </div>
     </div>
 

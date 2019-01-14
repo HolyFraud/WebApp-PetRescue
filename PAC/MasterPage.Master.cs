@@ -35,6 +35,12 @@ namespace PAC.View.Page
             Response.Redirect("/Members/MemberHome.aspx");
         }
 
+        protected void lbSearch_Click(object sender, EventArgs e)
+        {
+            Session.Remove("FullSearchSQL");
+            Response.Redirect("/AnimalSearch.aspx");
+        }
+
         protected void LbLogout_Click(object sender, EventArgs e)
         {
             Session.Abandon();

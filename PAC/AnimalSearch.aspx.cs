@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
@@ -25,82 +26,89 @@ namespace PAC
             {
                 getSessionSelection();
             }
-            //filterInfo();
+            if (null != Session["FullSearchSQL"])
+            {
+                ResultsSqlDataSource.SelectCommand = Session["FullSearchSQL"].ToString();
+            }
         }
 
+
+        //Get search key word of animal type from home page by passing session var
         private void getSessionSelection()
         {
             rblSpecies.DataBind();
             if ((string)Session["SearchRequest"] == "Dog")
             {
                 rblSpecies.Items[0].Selected = true;
+                Session["FullSearchSQL"] = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID Where AnimalType = 'Dog'";
                 Session.Remove("SearchRequest");
             }
             if ((string)Session["SearchRequest"] == "Cat")
             {
                 rblSpecies.Items[1].Selected = true;
+                Session["FullSearchSQL"] = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID Where AnimalType = 'Cat'";
                 Session.Remove("SearchRequest");
             }
             if ((string)Session["SearchRequest"] == "Other")
             {
                 rblSpecies.SelectedIndex = -1;
+                Session["FullSearchSQL"] = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID Where AnimalType Not In('Dog','Cat')";
                 Session.Remove("SearchRequest");
             }
         }
 
-        public string sexStatement(CheckBoxList thisCblSex)
+        /*------------------------------------------------Start Search Condition filter---------------------------------------*/
+
+        //start "SEX" filter condition by returning string type sql where clause 
+        public string sexStatement()
         {
             List<string> sexList = new List<string>();
             string sexCondition = "";
-            for (int i = 0; i < thisCblSex.Items.Count; i++)
+            for (int i = 0; i < cblSex.Items.Count; i++)
             {
-                if (thisCblSex.Items[i].Selected)
+                if (cblSex.Items[i].Selected)
                 {
-                    sexList.Add(thisCblSex.SelectedValue);
+                    sexList.Add(cblSex.SelectedValue);
                 }
             }
-            if (sexList.Count > 1 || thisCblSex.SelectedIndex == -1)
+            if (sexList.Count > 1 || cblSex.SelectedIndex == -1)
             {
                 return null;
-                //sexCondition = " AND Sex NOT IN ('')";
             }
             else
             {
-                sexCondition = " AND Sex IN ('" + thisCblSex.SelectedValue + "')";
+                sexCondition = " AND Sex IN ('" + cblSex.SelectedValue + "')";
             }
 
             return sexCondition;
         }
 
-
-
-        private string speciesStatement(RadioButtonList thisRblSpecies)
+        //start "AnimalType" filter condition by returning string type sql where clause 
+        private string speciesStatement()
         {
-            return thisRblSpecies.SelectedItem == null ? " AnimalType NOT IN ('')" : " AnimalType = '" + thisRblSpecies.SelectedItem.Text + "'";
+            return rblSpecies.SelectedItem == null ? " AnimalType NOT IN ('')" : " AnimalType = '" + rblSpecies.SelectedItem.Text + "'";
         }
 
-
-
-        private string breedStatement(CheckBoxList thisCbl)
+        //start "AnimalBreed" filter condition by returning string type sql where clause 
+        private string breedStatement()
         {
             string breedCondition = "";
 
             List<string> breedList = new List<string>();
-            for (int i = 0; i < thisCbl.Items.Count; i++)
+            for (int i = 0; i < cblBreed.Items.Count; i++)
             {
-                if (thisCbl.Items[i].Selected)
+                if (cblBreed.Items[i].Selected)
                 {
-                    breedList.Add(thisCbl.Items[i].Text);
+                    breedList.Add(cblBreed.Items[i].Text);
                 }
             }
-            if (thisCbl.SelectedIndex == -1)
+            if (cblBreed.SelectedIndex == -1)
             {
                 return null;
-                //breedCondition = " AND AnimalBreed NOT IN ('')";
             }
             else if (breedList.Count == 1)
             {
-                breedCondition = " AND AnimalBreed IN ('" + thisCbl.SelectedItem.Text + "')";
+                breedCondition = " AND AnimalBreed IN ('" + cblBreed.SelectedItem.Text + "')";
             }
             else if (breedList.Count > 1)
             {
@@ -124,36 +132,35 @@ namespace PAC
             return breedCondition;
         }
 
-
-
-        public string ageStatement(RadioButtonList thisRblAge)
+        //start "Age" filter condition by returning string type sql where clause 
+        public string ageStatement()
         {
-            return rblAge.SelectedIndex == -1 ? null : " And Age " + thisRblAge.SelectedValue;
+            return rblAge.SelectedIndex == -1 ? null : " And Age " + rblAge.SelectedValue;
 
         }
 
-        private string StateStatement(CheckBoxList cblState)
+        //start "State" filter condition by returning string type sql where clause 
+        private string StateStatement()
         {
             if (string.IsNullOrEmpty(tbPostCode.Text))
             {
                 List<string> stateList = new List<string>();
                 string stateCondition = "";
-                string stateSelected = cblState.SelectedValue;
-                foreach (ListItem item in cblState.Items)
+                string stateSelected = cblStateList.SelectedValue;
+                foreach (ListItem item in cblStateList.Items)
                 {
                     if (item.Selected)
                     {
                         stateList.Add(item.Value);
                     }
                 }
-                if (cblState.SelectedIndex == -1)
+                if (cblStateList.SelectedIndex == -1)
                 {
                     return null;
-                    //stateCondition = " AND State NOT IN ('')";
                 }
                 else if (stateList.Count == 1)
                 {
-                    stateCondition = " AND State = '" + cblState.SelectedValue + "'";
+                    stateCondition = " AND State = '" + cblStateList.SelectedValue + "'";
                 }
                 else if (stateList.Count > 1)
                 {
@@ -177,102 +184,42 @@ namespace PAC
             }
             return null;
         }
-
-        private string PostCode()
-        {
-            return tbPostCode.Text;
-        }
-
-        private string PcodeDistance()
-        {
-            return ddlRange.SelectedValue;
-        }
-
-
-        private string SelectCommand()
-        {
-            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList ON AnimalList.SuburbListID = SuburbList.SuburbListID";
-        }
-
+        /*------------------------------------------------End Search Condition filter---------------------------------------*/
 
         /*--------------------------------Order Function Below---------------------------------------------------------------------------*/
-
-        private string orderByStatement()
+        
+        //Using AutoPostBack to Call this funtion to bind datasource to rad grid
+        protected void ddlSortList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            return " Orderby " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
-
-        }
-
-        public void BindSql(string statSpecies, string statSex, string statAge, string statBreed, string statState)
-        {
-            int i = rblSpecies.SelectedIndex;
-            if (cblSex.SelectedIndex == -1 && rblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
+            if (null != Session["FullSearchSQL"])
             {
-                ResultsSqlDataSource.SelectCommand = SelectCommand();
-                Session["SearchResultsSql"] = ResultsSqlDataSource.SelectCommand;
-                ResultsSqlDataSource.DataBind();
+                ResultsSqlDataSource.SelectCommand = Session["FullSearchSQL"].ToString() + " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
                 ResultsRadgrid.DataBind();
             }
             else
             {
-                if (string.IsNullOrEmpty(tbPostCode.Text))
-                {
-                    ResultsSqlDataSource.SelectCommand = SelectCommand() + " WHERE " + statSpecies + statSex + statAge + statBreed + statState;
-                    Session["SearchResultsSql"] = ResultsSqlDataSource.SelectCommand;
-                    ResultsSqlDataSource.DataBind();
-                    ResultsRadgrid.DataBind();
-                }
-                else
-                {
-                    ResultsSqlDataSource.SelectCommand = QueryGetAnimalListByPostCodeDistance(ddlRange.SelectedValue) + " AND " + statSpecies + statSex + statAge + statBreed + statState;
-                    Session["SearchResultsSql"] = ResultsSqlDataSource.SelectCommand;
-                    ResultsSqlDataSource.DataBind();
-                    ResultsRadgrid.DataBind();
-                }
+                ResultsSqlDataSource.SelectCommand += " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
+                ResultsRadgrid.DataBind();
             }
-            
-        }
-
-        private void uncheckAllBreed()
-        {
-            foreach (ListItem listItem in cblBreed.Items)
-            {
-                listItem.Selected = false;
-            }
-        }
-
-        private void filterInfo()
-        {
-            BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(rblAge), breedStatement(cblBreed), StateStatement(cblStateList));
-        }
-
-        
-        
-
-        protected void ddlSortList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            
-            //string expression = ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
-            //SortDirection direction = SortDirection.Ascending;
-            //if (ddlDeriction.SelectedValue == "Desc")
-            //{
-            //    direction = SortDirection.Descending;
-            //}
-            //lvAnimalList.Sort(expression, direction);
         }
 
         protected void ddlDeriction_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //string expression = ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
-            //SortDirection direction = SortDirection.Ascending;
-            //if (ddlDeriction.SelectedValue == "Desc")
-            //{
-            //    direction = SortDirection.Descending;
-            //}
-
-            //lvAnimalList.Sort(expression, direction);
+            if (null != Session["FullSearchSQL"])
+            {
+                ResultsSqlDataSource.SelectCommand = Session["FullSearchSQL"].ToString() + " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
+                ResultsRadgrid.DataBind();
+            }
+            else
+            {
+                ResultsSqlDataSource.SelectCommand += " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
+                ResultsRadgrid.DataBind();
+            }
         }
+        /*-----------------------------------------End Order Function----------------------------------------------------*/
 
+
+        /*--------------------------------------Reset filter Conditon--------------------------------------------------------*/
         protected void lbReset_Click(object sender, EventArgs e)
         {
             Session["SearchRequest"] = "Others";
@@ -280,47 +227,22 @@ namespace PAC
             Session.Remove("SearchResultsSql");
         }
 
-        protected void lbDetails_Click(object sender, EventArgs e)
+        /*------------------------------------------End reset filter condition-----------------------------------------------*/
+
+        /*---------------------------------------------Start Particular Animal FurtherDetail function-----------------------*/
+        
+        protected void MoreInfoRadBtn_Click(object sender, EventArgs e)
         {
-            LinkButton lbDetails = sender as LinkButton;
-            Label lbID = lbDetails.Parent.FindControl("lbAnimalListID") as Label;
-            Session["AnimalListID"] = lbID.Text;
+            RadButton MoreInfoBtn = sender as RadButton;
+            RadLabel AnimalListIDRadLabel = MoreInfoBtn.Parent.FindControl("AnimalListIDRadLabel") as RadLabel;
+            Session["AnimalListID"] = AnimalListIDRadLabel.Text;
             Response.Redirect("/AnimalAdoption.aspx");
         }
 
-        /*------------------------------------------Get Public User Search Item Collection------------------------------------------*/
+        /*----------------------------------------------End particular animal furtherdetail function---------------------------*/
 
-        private string QueryGetAnimalTypeListID(string type)
-        {
-            return "Select AnimalTypeListID From AnimalTypeList Where AnimalType = '" + type + "'";
-        }
-
-        private string QueryGetAnimalBreedListID(string breed)
-        {
-            return "Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + breed + "'";
-        }
-
-        private string QueryInsertAnimalBreed(string breedid, string searchid)
-        {
-            return "Insert Into MemberSearchHistoryBreedItemList Values (" + breedid + ", " + searchid + ")";
-        }
-
-        private string QueryInsertState(string searchid, string state)
-        {
-            return "Insert Into MemberSearchHistoryStateList Values (" + searchid + ", '" + state + "')";
-        }
-
-        private string QueryInsertMemberSearchHistory(string memberid, string typeid, string agefrom, string ageto, string postcode, string postrange)
-        {
-            return "Insert Into MemberSearchHistoryList (MemberListID, AnimalTypeListID, AgeFrom, AgeTo, PostCode, PostCodeRange) Values(" + memberid + ", " + typeid + ", " + agefrom + ", " + ageto + ", " + postcode + ", " + postrange + ")";
-        }
-
-        private string QueryGetCurrentMemberSearchHistoryListID(string memberid, string typeid, string agefrom, string ageto, string postcode, string postrange)
-        {
-            return "Insert Into MemberSearchHistoryList (MemberListID, AnimalTypeListID, AgeFrom, AgeTo, PostCode, PostCodeRange) Values(" + memberid + ", " + typeid + ", " + agefrom + ", " + ageto + ", " + postcode + ", " + postrange + ") select SCOPE_IDENTITY()";
-        }
-
-
+        /*------------------------------------------Start Collect user behavior function------------------------------------------*/
+        
         private string GetFirstResByRunningQuery(string query)
         {
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
@@ -331,8 +253,6 @@ namespace PAC
             return reader[0].ToString();
         }
 
-
-
         private string GetMemberListID()
         {
             return null == Session["MemberMemberListID"] ? "0" : Session["MemberMemberListID"].ToString();
@@ -340,7 +260,6 @@ namespace PAC
 
         private string GetAnimalTypeListID()
         {
-            //return rblSpecies.SelectedIndex == -1 ? "0" : GetFirstResByRunningQuery(QueryGetAnimalTypeListID(rblSpecies.SelectedItem.Text));
             return rblSpecies.SelectedIndex == -1 ? "0" : rblSpecies.SelectedItem.Value;
         }
 
@@ -386,150 +305,129 @@ namespace PAC
         {
             return string.IsNullOrEmpty(tbPostCode.Text.Trim()) ? "NULL" : ddlRange.SelectedValue;
         }
-
-        private void InsertSearchAnimalBreed()
+        
+        //insert user search behavior data into sqlserver
+        private void InsertSearchActionCollection()
         {
+            //build sql values clause for insert into MemberSearchHistoryList
+            string memberlistid = GetMemberListID();
+            string animaltypeid = GetAnimalTypeListID();
+            string agefrom = GetAgeFrom();
+            string ageto = GetAgeTo();
+            string postcode = GetPostCode();
+            string postcoderange = GetPostCodeRange();
+
+            //insert into values select SCOPE_IDENTITY()
+            string GetCurrentSearchIDSQL = "Insert Into MemberSearchHistoryList (MemberListID, AnimalTypeListID, AgeFrom, AgeTo, PostCode, PostCodeRange) Values(" + memberlistid + ", " + animaltypeid + ", " + agefrom + ", " + ageto + ", " + postcode + ", " + postcoderange + ") select SCOPE_IDENTITY()";
+
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(GetCurrentSearchIDSQL, conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            Session["CurrentSearchID"] = reader[0];
+            reader.Close();
+
+            //insert search animalbreed history
+            //string GetBreedListIDSQL = "Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + breed + "'";
+            //insert animalbreed  "Insert Into MemberSearchHistoryBreedItemList Values (" + breedid + ", " + searchid + ")";
+            //InsertAnimalBreedSearchHistory(conn);
+            //InsertSearchState();
+            // "Insert Into MemberSearchHistoryStateList Values (" + searchid + ", '" + state + "')"
+            //if (cblStateList.SelectedIndex != -1)
+            //{
+            //    foreach (ListItem item in cblStateList.Items)
+            //    {
+            //        if (item.Selected)
+            //            Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", '" + item.Value + "')");
+            //    }
+            //}
+            //else
+            //{
+            //    Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", 'NULL')");
+            //}
+        }
+
+        private string GetBreedID(ListItem item)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand("Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + item.Text + "'", conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            return reader[0].ToString();
+        }
+
+        private void InsertAnimalBreedSearchHistory()
+        {
+            //string GetBreedIdSQL = "Select AnimalBreedListID From AnimalBreedList Where AnimalBreed = '" + item.Text + "'"
             if (cblBreed.SelectedIndex != -1)
             {
                 foreach (ListItem item in cblBreed.Items)
                 {
                     if (item.Selected)
-                        Util.ExecuteQuery(QueryInsertAnimalBreed(GetFirstResByRunningQuery(QueryGetAnimalBreedListID(item.Text)), Session["CurrentSearchID"].ToString()));
+                    {
+                        string breedid = GetBreedID(item);
+                        Util.ExecuteQuery("Insert Into MemberSearchHistoryBreedItemList Values (" + breedid + ", " + Session["CurrentSearchID"].ToString() + ")");
+                    }
                 }
             }
             else
             {
-                Util.ExecuteQuery(QueryInsertAnimalBreed("0", Session["CurrentSearchID"].ToString()));
+                Util.ExecuteQuery("Insert Into MemberSearchHistoryBreedItemList Values (" + 0 + ", " + Session["CurrentSearchID"].ToString() + ")");
             }
         }
-
-        private void InsertSearchState()
+        
+        //insert user search state behavior data 
+        private void InsertStateSearchHistory()
         {
             if (cblStateList.SelectedIndex != -1)
             {
                 foreach (ListItem item in cblStateList.Items)
                 {
                     if (item.Selected)
-                        Util.ExecuteQuery(QueryInsertState(Session["CurrentSearchID"].ToString(), item.Value));
+                        Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", '" + item.Value + "')");
                 }
             }
             else
             {
-                Util.ExecuteQuery(QueryInsertState(Session["CurrentSearchID"].ToString(), "NULL"));
+                Util.ExecuteQuery("Insert Into MemberSearchHistoryStateList Values (" + Session["CurrentSearchID"].ToString() + ", 'NULL')");
             }
         }
 
-        private void InsertSearchActionCollection()
-        {
-            Session["CurrentSearchID"] = GetFirstResByRunningQuery(QueryGetCurrentMemberSearchHistoryListID(GetMemberListID(), GetAnimalTypeListID(), GetAgeFrom(), GetAgeTo(), GetPostCode(), GetPostCodeRange()));
-            InsertSearchAnimalBreed();
-            InsertSearchState();
-        }
+        /*-----------------------------------------------------End Collect user behavior function--------------------------------*/
 
         /*----------------------------------------------Telerik Gridview For AnimalList--------------------------------------------------------*/
 
         private string QuerySelectAnimalList(string id)
         {
-            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID Where AnimalListID = " + id;
+            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID Where AnimalListID = " + id;
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            //InsertSearchActionCollection();
-            string baseSQL = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID ";
-
-            string typeSQL = "";
-            string breedSQL = "";
-            string sexSQL = "";
-            string ageSQL = "";
-            string DistanceSQL = "";
-            string stateSQL = "";
-
+            string baseSQL = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID ";
             ////build where clause
-            //typesql
-            if (rblSpecies.SelectedIndex != -1)
-            {
-                typeSQL = " AnimalTypeListID = " + rblSpecies.SelectedValue.ToString();
-            }
-            //breed sql
-            List<string> List = new List<string>();
-            for (int i = 0; i < cblBreed.Items.Count; i++)
-            {
-                if (cblBreed.Items[i].Selected)
-                {
-                    List.Add(cblBreed.Items[i].Text);
-                }
-            }
-            if (cblBreed.SelectedIndex == -1)
-            {
-                //breedCondition = " AND AnimalBreed NOT IN ('')";
-            }
-            else if (List.Count == 1)
-            {
-                breedSQL = " AND AnimalBreed IN ('" + cblBreed.SelectedItem.Text + "')";
-            }
-            else if (List.Count > 1)
-            {
-                for (int i = 0; i < List.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        breedSQL = " AND AnimalBreed IN ('" + List[i];
-                    }
-                    else if (i == List.Count - 1)
-                    {
-                        breedSQL += "', '" + List[i] + "')";
-                    }
-                    else
-                    {
-                        breedSQL += "', '" + List[i];
-                    }
-                }
-            }
-
-            //sex sql
-            List = new List<string>();
-            for (int i = 0; i < cblSex.Items.Count; i++)
-            {
-                if (cblSex.Items[i].Selected)
-                {
-                    List.Add(cblSex.SelectedValue);
-                }
-            }
-            if (List.Count > 1 || cblSex.SelectedIndex == -1)
-            {
-                //sexCondition = " AND Sex NOT IN ('')";
-            }
-            else
-            {
-                sexSQL = " AND Sex IN ('" + cblSex.SelectedValue + "')";
-            }
-
-            //age sql
-            if (rblAge.SelectedIndex != -1)
-            {
-                ageSQL = " And Age = " + rblAge.SelectedValue;
-            }
-
-            //postcode distance sql
-            if (!string.IsNullOrEmpty(tbPostCode.Text.Trim()))
-            {
-                double lat = GetJSONObject().results[0].geometry.location.lat;
-                double lng = GetJSONObject().results[0].geometry.location.lng;
-                DistanceSQL = "DECLARE @GEO1 GEOGRAPHY, @LAT VARCHAR(10), @LONG VARCHAR(10) SET @LAT='" + lat + "' SET @LONG='" + lng + "' SET @geo1= geography::Point(@LAT, @LONG, 4326) SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList ON AnimalList.SuburbListID = SuburbList.SuburbListID where(@geo1.STDistance(geography::Point(ISNULL(GPSLat, 0), ISNULL(GPSLon, 0), 4326)) / 1000) < " + ddlRange.SelectedValue;
-
-            }
-
-            List = new List<string>();
-
-
-            //Session""
-            //ResultsSqlDataSource.Select = fullsql
-            //ResultsRadgrid.DataBind
-            //filterInfo();
-
+            string typeSQL = speciesStatement();
+            string breedSQL = breedStatement();
+            string sexSQL = sexStatement();
+            string ageSQL = ageStatement();
+            string distanceSQL = DistanceStatement();
+            string stateSQL = StateStatement();
+            //session var
+            Session["FullSearchSQL"] = baseSQL + " Where " + typeSQL + breedSQL + sexSQL + ageSQL + stateSQL + distanceSQL;
+            //bind data
+            ResultsSqlDataSource.SelectCommand = Session["FullSearchSql"].ToString();
+            ResultsRadgrid.DataBind();
+            
+            //collect user search behavior which are search breed, search state for animals, and all info search for members
+            //for members
+            InsertSearchActionCollection();
+            //for breed
+            InsertAnimalBreedSearchHistory();
+            //for state
+            InsertStateSearchHistory();
         }
-
 
         private RootObject GetJSONObject()
         {
@@ -539,135 +437,31 @@ namespace PAC
             return item;
         }
 
-        private string QueryGetAnimalListByPostCodeDistance(string distance)
+        private string DistanceStatement()
         {
-            double lat = GetJSONObject().results[0].geometry.location.lat;
-            double lng = GetJSONObject().results[0].geometry.location.lng;
-            return "DECLARE @GEO1 GEOGRAPHY, @LAT VARCHAR(10), @LONG VARCHAR(10) SET @LAT='" + lat + "' SET @LONG='" + lng + "' SET @geo1= geography::Point(@LAT, @LONG, 4326) SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList ON AnimalList.SuburbListID = SuburbList.SuburbListID where(@geo1.STDistance(geography::Point(ISNULL(GPSLat, 0), ISNULL(GPSLon, 0), 4326)) / 1000) < " + distance;
-
+            if (!string.IsNullOrEmpty(tbPostCode.Text))
+            {
+                double lat = GetJSONObject().results[0].geometry.location.lat;
+                double lng = GetJSONObject().results[0].geometry.location.lng;
+                return "And (111.045 * DEGREES(ACOS(COS(RADIANS(" + lat + ")) * COS(RADIANS((SuburbList.GPSLat))) * COS(RADIANS(" + lng + ") - RADIANS(SuburbList.GPSLon)) + SIN(RADIANS(" + lat + ")) * SIN(RADIANS(SuburbList.GPSLat))))) < " + ddlRange.SelectedValue;
+            }
+            else
+                return null;
         }
 
-        protected void rgAnimalList_ItemDataBound(object sender, Telerik.Web.UI.GridItemEventArgs e)
+        protected void Grid_ResultsSqlDataSource(object sender, GridNeedDataSourceEventArgs e)
         {
-            if (e.Item.ItemType == GridItemType.AlternatingItem || e.Item.ItemType == GridItemType.Item)
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlDataSource newsource = new SqlDataSource();
+            if (null != Session["FullSearchSQL"])
             {
-                GridDataItem dataItem = e.Item as GridDataItem;
-                RadLabel NameRadLabel = dataItem.FindControl("NameRadLabel") as RadLabel;
-                RadLabel AgeRadLabel = dataItem.FindControl("AgeRadLabel") as RadLabel;
-                RadLabel SexRadLabel = dataItem.FindControl("SexRadLabel") as RadLabel;
-                RadLabel TypeRadLabel = dataItem.FindControl("TypeRadLabel") as RadLabel;
-                RadLabel ColorRadLabel = dataItem.FindControl("ColorRadLabel") as RadLabel;
-                RadLabel BreedRadLabel = dataItem.FindControl("BreedRadLabel") as RadLabel;
-                SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-                conn.Open();
-                if (null != Session["SearchResultsSql"])
-                {
-                    SqlCommand cmd = new SqlCommand(Session["SearchResultsSql"].ToString() + " And AnimalListID = " + dataItem.GetDataKeyValue("AnimalListID").ToString(), conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        NameRadLabel.Text = reader[1].ToString();
-                        AgeRadLabel.Text = reader[2].ToString();
-                        SexRadLabel.Text = reader[3].ToString();
-                        TypeRadLabel.Text = reader[4].ToString();
-                        ColorRadLabel.Text = reader[5].ToString();
-                        BreedRadLabel.Text = reader[6].ToString();
-                    }
-                }
-                else
-                {
-                    SqlCommand cmd = new SqlCommand(QuerySelectAnimalList(dataItem.GetDataKeyValue("AnimalListID").ToString()), conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        NameRadLabel.Text = reader[1].ToString();
-                        AgeRadLabel.Text = reader[2].ToString();
-                        SexRadLabel.Text = reader[3].ToString();
-                        TypeRadLabel.Text = reader[4].ToString();
-                        ColorRadLabel.Text = reader[5].ToString();
-                        BreedRadLabel.Text = reader[6].ToString();
-                    }
-                }
+                newsource.SelectCommand = Session["FullSearchSQL"].ToString();
+                ResultsRadgrid.DataSource = newsource;
                 
             }
-            
-            //    if (cblSex.SelectedIndex == -1 && rblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
-            //    {
-            //        SqlCommand cmd = new SqlCommand(QuerySelectAnimalList(dataItem.GetDataKeyValue("AnimalListID").ToString()), conn);
-            //        SqlDataReader reader = cmd.ExecuteReader();
-            //        if (reader.Read())
-            //        {
-            //            NameRadLabel.Text = reader[1].ToString();
-            //            AgeRadLabel.Text = reader[2].ToString();
-            //            SexRadLabel.Text = reader[3].ToString();
-            //            TypeRadLabel.Text = reader[4].ToString();
-            //            ColorRadLabel.Text = reader[5].ToString();
-            //            BreedRadLabel.Text = reader[6].ToString();
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (string.IsNullOrEmpty(tbPostCode.Text))
-            //        {
-            //            SqlCommand cmd = new SqlCommand(QuerySelectAnimalList(dataItem.GetDataKeyValue("AnimalListID").ToString()) + speciesStatement(rblSpecies) + sexStatement(cblSex) + ageStatement(rblAge) + breedStatement(cblBreed) + StateStatement(cblStateList), conn);
-            //            SqlDataReader reader = cmd.ExecuteReader();
-            //            if (reader.Read())
-            //            {
-            //                NameRadLabel.Text = reader[1].ToString();
-            //                AgeRadLabel.Text = reader[2].ToString();
-            //                SexRadLabel.Text = reader[3].ToString();
-            //                TypeRadLabel.Text = reader[4].ToString();
-            //                ColorRadLabel.Text = reader[5].ToString();
-            //                BreedRadLabel.Text = reader[6].ToString();
-            //            }
-            //        }
-            //        else
-            //        {
-            //            SqlCommand cmd = new SqlCommand(QueryGetAnimalListByPostCodeDistance(ddlRange.SelectedValue) + " And AnimalListID = " + dataItem.GetDataKeyValue("AnimalListID").ToString() + speciesStatement(rblSpecies) + sexStatement(cblSex) + ageStatement(rblAge) + breedStatement(cblBreed) + StateStatement(cblStateList), conn);
-            //            SqlDataReader reader = cmd.ExecuteReader();
-            //            if (reader.Read())
-            //            {
-            //                NameRadLabel.Text = reader[1].ToString();
-            //                AgeRadLabel.Text = reader[2].ToString();
-            //                SexRadLabel.Text = reader[3].ToString();
-            //                TypeRadLabel.Text = reader[4].ToString();
-            //                ColorRadLabel.Text = reader[5].ToString();
-            //                BreedRadLabel.Text = reader[6].ToString();
-            //            }
-            //        }
-            //    }
-
-            //}
         }
-    }
 
-    //private void filterInfo()
-    //{
-    //    BindSql(speciesStatement(rblSpecies), sexStatement(cblSex), ageStatement(rblAge), breedStatement(cblBreed), StateStatement(cblStateList));
-    //}
+        
+    }
 }
-//public void BindSql(string statSpecies, string statSex, string statAge, string statBreed, string statState)
-//{
-//    int i = rblSpecies.SelectedIndex;
-//    if (cblSex.SelectedIndex == -1 && rblAge.SelectedIndex == -1 && rblSpecies.SelectedItem == null && cblStateList.SelectedIndex == -1 && string.IsNullOrEmpty(tbPostCode.Text))
-//    {
-//        SqlDataSource1.SelectCommand = SelectCommand();
-//        SqlDataSource1.DataBind();
-//        lvAnimalList.DataBind();
-//    }
-//    else
-//    {
-//        if (string.IsNullOrEmpty(tbPostCode.Text))
-//        {
-//            SqlDataSource1.SelectCommand = SelectCommand() + " WHERE " + statSpecies + statSex + statAge + statBreed + statState;
-//            SqlDataSource1.DataBind();
-//            lvAnimalList.DataBind();
-//        }
-//        else
-//        {
-//            SqlDataSource1.SelectCommand = QueryGetAnimalListByPostCodeDistance(ddlRange.SelectedValue) + " AND " + statSpecies + statSex + statAge + statBreed + statState;
-//            SqlDataSource1.DataBind();
-//            lvAnimalList.DataBind();
-//        }
-//    }
-//}
