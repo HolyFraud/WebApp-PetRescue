@@ -170,6 +170,7 @@
     <Content Include="CSS\Style.css" />
     <Content Include="CSS\ManageMyAccount.css" />
     <Content Include="CSS\AnimalAdoption.css" />
+    <Content Include="FavouriteService.asmx" />
     <Content Include="Image\Logo-petadopt.jpeg" />
     <Content Include="Image\Logo-petadopt1.jpeg" />
     <Content Include="Image\MP-cat1.jpg" />
@@ -185,6 +186,7 @@
     <Content Include="JS\AnimalSearchjs.js" />
     <Content Include="JS\bootstrap.js" />
     <Content Include="JS\bootstrap.min.js" />
+    <Content Include="JS\Favourite.js" />
     <Content Include="JS\jquery-3.3.1.min.js" />
     <Content Include="JS\npm.js" />
     <Content Include="LoginChoice.aspx" />
@@ -215,6 +217,11 @@
     <Content Include="WebForm1.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Favourite.cs" />
+    <Compile Include="FavouriteService.asmx.cs">
+      <DependentUpon>FavouriteService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="JSONObject.cs" />
     <Compile Include="Advertisers\AdvertiserHome.aspx.cs">
       <DependentUpon>AdvertiserHome.aspx</DependentUpon>
@@ -424,7 +431,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties UseAjaxifiedTemplates="False" UseJQuerySupport="False" />
+      <UserProperties UseJQuerySupport="False" UseAjaxifiedTemplates="False" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

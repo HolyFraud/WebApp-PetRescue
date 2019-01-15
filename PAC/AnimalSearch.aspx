@@ -3,11 +3,14 @@
 
     <link href="CSS/AnimalSearch.css" rel="stylesheet" />
     <script src="JS/AnimalSearchjs.js"></script>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="JS/Favourite.js"></script>
     
     
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
 
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
@@ -149,48 +152,53 @@
                         <telerik:GridTemplateColumn FilterControlAltText="Filter TemplateColumn column" UniqueName="TemplateColumn">
                             <ItemTemplate>
                                 
-                                <table style="width: 50%;">
+                                <table style="width: 20%;">
                                     <asp:Image ID="AnimalImg" runat="server" />
-                                    <telerik:RadLabel ID="AnimalListIDRadLabel" runat="server" Text='<%#Eval("AnimalListID") %>' Visible="false"></telerik:RadLabel>
+                                    <telerik:RadLabel ID="AnimalListID" runat="server" Text='<%#Eval("AnimalListID") %>'></telerik:RadLabel>
+                                    <telerik:RadLabel ID="MemberListID" runat="server"><%=Session["MemberMemberListID"].ToString() %></telerik:RadLabel>
                                     <tr>
                                         <td>Name:</td>
                                         <td>
-                                            <%# Eval("Name") %>
+                                            <telerik:RadLabel ID="NameRadLabel" runat="server" Text='<%# Eval("Name") %>'></telerik:RadLabel>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Age:</td>
                                         <td>
-                                            <%# Eval("Age") %>
+                                            <telerik:RadLabel ID="AgeRadLabel" runat="server"><%# Eval("Age") %></telerik:RadLabel>
+                                            
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Sex</td>
                                         <td>
-                                            <%#Eval("Sex") %>
+                                            <telerik:RadLabel ID="SexRadLabel" runat="server"><%#Eval("Sex") %></telerik:RadLabel>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Type:</td>
                                         <td>
-                                            <%#Eval("AnimalType") %>
+                                            <telerik:RadLabel ID="TypeRadLabel" runat="server"><%#Eval("AnimalType") %></telerik:RadLabel>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Color</td>
                                         <td>
-                                            <%#Eval("Color") %>
+                                            <telerik:RadLabel ID="ColorRadLabel" runat="server"><%#Eval("Color") %></telerik:RadLabel>
+                                            
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>Breed</td>
                                         <td>
-                                            <%#Eval("AnimalBreed") %>
+                                            <telerik:RadLabel ID="BreedRadLabel" runat="server"><%#Eval("AnimalBreed") %></telerik:RadLabel>
+                                            
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <telerik:RadButton ID="MoreInfoRadBtn" runat="server" Text="More Info" OnClick="MoreInfoRadBtn_Click"></telerik:RadButton>
+                                            <telerik:RadButton ID="LoveRadBtn" runat="server" Text="Favourite" style="position: relative;"></telerik:RadButton>
                                         </td>
                                     </tr>
                                 </table>

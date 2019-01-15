@@ -30,6 +30,10 @@ namespace PAC
             {
                 ResultsSqlDataSource.SelectCommand = Session["FullSearchSQL"].ToString();
             }
+            if (null != Session["GoToSearchFlag"])
+            {
+                ResultsSqlDataSource.SelectCommand = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID order by AnimalList.Created desc";
+            }
         }
 
 
@@ -198,7 +202,7 @@ namespace PAC
             }
             else
             {
-                ResultsSqlDataSource.SelectCommand += " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
+                ResultsSqlDataSource.SelectCommand = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
                 ResultsRadgrid.DataBind();
             }
         }
@@ -212,7 +216,7 @@ namespace PAC
             }
             else
             {
-                ResultsSqlDataSource.SelectCommand += " Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
+                ResultsSqlDataSource.SelectCommand = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID Order By " + ddlSortList.SelectedValue + " " + ddlDeriction.SelectedValue;
                 ResultsRadgrid.DataBind();
             }
         }
@@ -223,6 +227,7 @@ namespace PAC
         protected void lbReset_Click(object sender, EventArgs e)
         {
             Session["SearchRequest"] = "Others";
+            Session["GoToSearchFlag"] = 1;
             Response.Redirect("/AnimalSearch.aspx");
             Session.Remove("SearchResultsSql");
         }
@@ -243,15 +248,6 @@ namespace PAC
 
         /*------------------------------------------Start Collect user behavior function------------------------------------------*/
         
-        private string GetFirstResByRunningQuery(string query)
-        {
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(query, conn);
-            SqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-            return reader[0].ToString();
-        }
 
         private string GetMemberListID()
         {
@@ -409,6 +405,9 @@ namespace PAC
             InsertAnimalBreedSearchHistory();
             //for state
             InsertStateSearchHistory();
+
+            //remove flag session
+            Session.Remove("GoToSearchFlag");
         }
 
         private RootObject GetJSONObject()

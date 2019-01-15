@@ -37,7 +37,9 @@ namespace PAC.View.Page
 
         protected void lbSearch_Click(object sender, EventArgs e)
         {
+            Session["GoToSearchFlag"] = 1;
             Session.Remove("FullSearchSQL");
+            //Session["FullSearchSQL"] = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID order by AnimalList.Created desc";
             Response.Redirect("/AnimalSearch.aspx");
         }
 
