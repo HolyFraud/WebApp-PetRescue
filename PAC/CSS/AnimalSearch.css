@@ -43,3 +43,43 @@ section {
     position: absolute;
     right: 0;
 }
+
+.likebtnbefore {
+    
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 50%;
+    margin: 2px 5px;
+    font-size:18px;
+}
+
+.likebtnafter {
+    background-color: #0099ff;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 50%;
+    margin: 2px 5px;
+    font-size: 18px;
+}
+
+.morebtn {
+    background-color: #0099ff;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 12px;
+    margin: 2px 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.morebtn:hover, .likebtnbefore:hover, .likebtnafter:hover {
+    transform: scale(1.1);
+}

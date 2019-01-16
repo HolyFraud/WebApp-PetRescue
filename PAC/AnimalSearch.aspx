@@ -10,8 +10,7 @@
     
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
-
+    
     <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:SQLConnectionString %>" 
         SelectCommand="SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID"></asp:SqlDataSource>
 
@@ -102,11 +101,19 @@
             <asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click"/>
             <asp:Label ID="lb" runat="server" Text="Label"></asp:Label>
         </div>
-
+        <!-------------------------------------------------------------------------------------------------->
+        <!-------------------------------------------------------------------------------------------------->
+        <!-------------------------------------------------------------------------------------------------->
+        <!-------------------------------------------------------------------------------------------------->
+        <!-------------------------------------------------------------------------------------------------->
 
         <div class="presentbar">
             
-            <span>
+            
+
+            <asp:UpdatePanel ID="panel" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
+                    <span>
                 <span>Order </span>
                 <asp:DropDownList ID="ddlSortList" runat="server" 
                     AppendDataBoundItems="true"
@@ -125,14 +132,13 @@
                 <asp:ListItem Value="ASC" Selected="True">ASC</asp:ListItem>
                 <asp:ListItem Value="DESC">DESC</asp:ListItem>
             </asp:DropDownList><br />
-
+       
             <telerik:RadGrid ID="ResultsRadgrid" runat="server" 
                 AutoGenerateColumns="False" 
                 DataSourceID="ResultsSqlDataSource"
-                
                 AllowPaging="True"
                 AllowSorting="True"
-                HeaderStyle-CssClass="display:none;" OnNeedDataSource="Grid_ResultsSqlDataSource">
+                HeaderStyle-CssClass="display:none;">
                 <GroupingSettings CollapseAllTooltip="Collapse all groups"></GroupingSettings>
                 <MasterTableView DataKeyNames="AnimalListID" 
                     DataSourceID="ResultsSqlDataSource"
@@ -154,8 +160,7 @@
                                 
                                 <table style="width: 20%;">
                                     <asp:Image ID="AnimalImg" runat="server" />
-                                    <telerik:RadLabel ID="AnimalListID" runat="server" Text='<%#Eval("AnimalListID") %>'></telerik:RadLabel>
-                                    <telerik:RadLabel ID="MemberListID" runat="server"><%=Session["MemberMemberListID"].ToString() %></telerik:RadLabel>
+                                    <telerik:RadLabel ID="AnimalListIDRadLabel" runat="server" Text='<%#Eval("AnimalListID") %>' Visible="false"></telerik:RadLabel>
                                     <tr>
                                         <td>Name:</td>
                                         <td>
@@ -197,8 +202,8 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <telerik:RadButton ID="MoreInfoRadBtn" runat="server" Text="More Info" OnClick="MoreInfoRadBtn_Click"></telerik:RadButton>
-                                            <telerik:RadButton ID="LoveRadBtn" runat="server" Text="Favourite" style="position: relative;"></telerik:RadButton>
+                                            <asp:Button ID="MoreInfoBtn" runat="server" CssClass="morebtn" Text="More Info" OnClick="MoreInfoBtn_Click"/>
+                                            <asp:Button ID="LikeBtn" runat="server" Text="Like" CssClass="likebtnbefore" OnClick="LikeBtn_Click"/>
                                         </td>
                                     </tr>
                                 </table>
@@ -212,7 +217,8 @@
 <HeaderStyle CssClass="display:none;"></HeaderStyle>
             </telerik:RadGrid>
 
-
+                </ContentTemplate>
+            </asp:UpdatePanel>
 
 
         </div>

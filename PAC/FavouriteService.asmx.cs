@@ -15,6 +15,7 @@ namespace PAC
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
+    [System.Web.Script.Services.ScriptService]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
     // [System.Web.Script.Services.ScriptService]
     public class FavouriteService : System.Web.Services.WebService
@@ -25,18 +26,17 @@ namespace PAC
         {
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
 
-            SqlCommand cmd = new SqlCommand("spAddFavourite", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            SqlCommand cmd = new SqlCommand("spAddFavourite", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
             cmd.Parameters.Add(new SqlParameter()
             {
-                ParameterName = "MemberListID",
+                ParameterName = "@MemberListID",
                 Value = favourite.MemberListID
             });
             cmd.Parameters.Add(new SqlParameter()
             {
-                ParameterName = "AnimalListID",
+                ParameterName = "@AnimalListID",
                 Value = favourite.AnimalListID
             });
             conn.Open();

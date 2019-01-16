@@ -25,6 +25,7 @@ namespace PAC
             if (!IsPostBack)
             {
                 getSessionSelection();
+                
             }
             if (null != Session["FullSearchSQL"])
             {
@@ -34,6 +35,7 @@ namespace PAC
             {
                 ResultsSqlDataSource.SelectCommand = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID order by AnimalList.Created desc";
             }
+            DisplayLikedSign();
         }
 
 
@@ -236,9 +238,9 @@ namespace PAC
 
         /*---------------------------------------------Start Particular Animal FurtherDetail function-----------------------*/
         
-        protected void MoreInfoRadBtn_Click(object sender, EventArgs e)
+        protected void MoreInfoBtn_Click(object sender, EventArgs e)
         {
-            RadButton MoreInfoBtn = sender as RadButton;
+            Button MoreInfoBtn = sender as Button;
             RadLabel AnimalListIDRadLabel = MoreInfoBtn.Parent.FindControl("AnimalListIDRadLabel") as RadLabel;
             Session["AnimalListID"] = AnimalListIDRadLabel.Text;
             Response.Redirect("/AnimalAdoption.aspx");
@@ -376,10 +378,36 @@ namespace PAC
         /*-----------------------------------------------------End Collect user behavior function--------------------------------*/
 
         /*----------------------------------------------Telerik Gridview For AnimalList--------------------------------------------------------*/
-
-        private string QuerySelectAnimalList(string id)
+        private void DisplayLikedSign()
         {
-            return "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID Where AnimalListID = " + id;
+            //panel.Update();
+            List<Favourite> favlist = new List<Favourite>(); 
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            if (null != Session["MemberMemberListID"])
+            {
+                SqlCommand cmd = new SqlCommand("Select MemberListID, AnimalListID, RecordStatus From MemberFavouriteList Where RecordStatus = 1 And MemberListID = " + Session["MemberMemberListID"].ToString(), conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Favourite fav = new Favourite(reader[0].ToString(), reader[1].ToString(), reader[2].ToString());
+                    favlist.Add(fav);
+                }
+                reader.Close();
+
+                foreach (GridDataItem row in ResultsRadgrid.Items)
+                {
+                    RadLabel LikedAnimal = row.FindControl("AnimalListIDRadLabel") as RadLabel;
+                    foreach (Favourite fav in favlist)
+                    {
+                        if (LikedAnimal.Text == fav.AnimalListID)
+                        {
+                            Button LikeBtn = row.FindControl("LikeBtn") as Button;
+                            LikeBtn.CssClass = "likebtnafter";
+                        }
+                    }
+                }
+            }
         }
 
         protected void btnSearch_Click(object sender, EventArgs e)
@@ -430,19 +458,22 @@ namespace PAC
                 return null;
         }
 
-        protected void Grid_ResultsSqlDataSource(object sender, GridNeedDataSourceEventArgs e)
+        
+
+        protected void LikeBtn_Click(object sender, EventArgs e)
         {
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlDataSource newsource = new SqlDataSource();
-            if (null != Session["FullSearchSQL"])
+            Button favouritebtn = sender as Button;
+            RadLabel AnimalListIDRadLabel = favouritebtn.Parent.FindControl("AnimalListIDRadLabel") as RadLabel;
+            if (null != Session["MemberMemberListID"])
             {
-                newsource.SelectCommand = Session["FullSearchSQL"].ToString();
-                ResultsRadgrid.DataSource = newsource;
+                Util.ExecuteQuery("Insert Into MemberFavouriteList (MemberListID, AnimalListID) Values (" + Session["MemberMemberListID"].ToString() + ", " + AnimalListIDRadLabel.Text + ")");
+                favouritebtn.CssClass = "likebtnafter";
+            }
+            else
+            {
                 
+                //favouritebtn.CssClass = "likebtnafter";
             }
         }
-
-        
     }
 }
