@@ -27,7 +27,7 @@ namespace PAC.Members
             cmd.Parameters.AddWithValue("@Email", txtUsername.Text.Trim());
             cmd.Parameters.AddWithValue("@Password", txtPassword.Text.Trim());
             int count = Convert.ToInt32(cmd.ExecuteScalar());
-            string[] columnList = DBManager.getColumnName("MemberList");
+            string[] columnList = Util.getColumnName("MemberList");
             
 
             //Check the username validation

@@ -293,7 +293,6 @@
     <Compile Include="AnimalSearch.aspx.designer.cs">
       <DependentUpon>AnimalSearch.aspx</DependentUpon>
     </Compile>
-    <Compile Include="DBManager.cs" />
     <Compile Include="Includes.cs" />
     <Compile Include="JSONTest.aspx.cs">
       <DependentUpon>JSONTest.aspx</DependentUpon>
@@ -431,7 +430,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties UseJQuerySupport="False" UseAjaxifiedTemplates="False" />
+      <UserProperties UseAjaxifiedTemplates="False" UseJQuerySupport="False" />
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

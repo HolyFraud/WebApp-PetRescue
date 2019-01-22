@@ -317,9 +317,17 @@ namespace PAC.Advertisers
             }
             return true;
         }
-        
 
-        
+
+        private bool ExistUser(string email)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand("Select RecordStatus From AdvertiserUserList Where EmailAddress = '" + email + "'", conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            return (bool)reader[0];
+        }
 
         private void BtnSave_Click()
         {
@@ -331,7 +339,7 @@ namespace PAC.Advertisers
             {
                 if (Util.ExistEmail(txtEmail.Text, "AdvertiserUserList", "EmailAddress"))
                 {
-                    if (Util.RecordStatusActive(txtEmail.Text, "AdvertiserUserList", "EmailAddress"))
+                    if (ExistUser(txtEmail.Text))
                     {
                         LbMessege.Text = "User has been Exist...!";
                     }

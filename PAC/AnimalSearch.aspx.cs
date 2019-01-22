@@ -25,7 +25,6 @@ namespace PAC
             if (!IsPostBack)
             {
                 getSessionSelection();
-                
             }
             if (null != Session["FullSearchSQL"])
             {
@@ -35,7 +34,6 @@ namespace PAC
             {
                 ResultsSqlDataSource.SelectCommand = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID order by AnimalList.Created desc";
             }
-            DisplayLikedSign();
         }
 
 
@@ -378,38 +376,7 @@ namespace PAC
         /*-----------------------------------------------------End Collect user behavior function--------------------------------*/
 
         /*----------------------------------------------Telerik Gridview For AnimalList--------------------------------------------------------*/
-        private void DisplayLikedSign()
-        {
-            //panel.Update();
-            List<Favourite> favlist = new List<Favourite>(); 
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            if (null != Session["MemberMemberListID"])
-            {
-                SqlCommand cmd = new SqlCommand("Select MemberListID, AnimalListID, RecordStatus From MemberFavouriteList Where RecordStatus = 1 And MemberListID = " + Session["MemberMemberListID"].ToString(), conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    Favourite fav = new Favourite(reader[0].ToString(), reader[1].ToString(), reader[2].ToString());
-                    favlist.Add(fav);
-                }
-                reader.Close();
-
-                foreach (GridDataItem row in ResultsRadgrid.Items)
-                {
-                    RadLabel LikedAnimal = row.FindControl("AnimalListIDRadLabel") as RadLabel;
-                    foreach (Favourite fav in favlist)
-                    {
-                        if (LikedAnimal.Text == fav.AnimalListID)
-                        {
-                            Button LikeBtn = row.FindControl("LikeBtn") as Button;
-                            LikeBtn.CssClass = "likebtnafter";
-                        }
-                    }
-                }
-            }
-        }
-
+       
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             string baseSQL = "SELECT AnimalList.AnimalListID, AnimalList.Name, AnimalList.Age, AnimalList.Sex, AnimalTypeList.AnimalType, AnimalList.Color, AnimalBreedList.AnimalBreed FROM AnimalTypeList INNER JOIN AnimalList ON AnimalTypeList.AnimalTypeListID = AnimalList.AnimalTypeListID INNER JOIN AnimalBreedList ON AnimalList.AnimalBreedListID = AnimalBreedList.AnimalBreedListID INNER JOIN SuburbList on SuburbList.SuburbListID = AnimalList.SuburbListID ";
@@ -458,21 +425,75 @@ namespace PAC
                 return null;
         }
 
-        
+        //Check the favourite pet recordstatus is active or not
+        private bool ExistRecord(string animalid)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand("Select COUNT(*) From MemberFavouriteList Where MemberListID = " + Session["MemberMemberListID"].ToString() + " And AnimalListID = " + animalid, conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            int res = Convert.ToInt32(reader[0]);
+            if (res < 1)
+                return false;
+            return true;
+        }
 
         protected void LikeBtn_Click(object sender, EventArgs e)
         {
             Button favouritebtn = sender as Button;
             RadLabel AnimalListIDRadLabel = favouritebtn.Parent.FindControl("AnimalListIDRadLabel") as RadLabel;
-            if (null != Session["MemberMemberListID"])
+            if (null != Session["MemberMemberListID"] && favouritebtn.CssClass == "likebtnbefore")
             {
-                Util.ExecuteQuery("Insert Into MemberFavouriteList (MemberListID, AnimalListID) Values (" + Session["MemberMemberListID"].ToString() + ", " + AnimalListIDRadLabel.Text + ")");
-                favouritebtn.CssClass = "likebtnafter";
+                if (ExistRecord(AnimalListIDRadLabel.Text))
+                {
+                    Util.ExecuteQuery("Update MemberFavouriteList Set RecordStatus = 1 Where MemberListID = " + Session["MemberMemberListID"].ToString() + " And AnimalListID = " + AnimalListIDRadLabel.Text);
+                    favouritebtn.CssClass = "likebtnafter";
+                }
+                else
+                {
+                    Util.ExecuteQuery("Insert Into MemberFavouriteList (MemberListID, AnimalListID) Values (" + Session["MemberMemberListID"].ToString() + ", " + AnimalListIDRadLabel.Text + ")");
+                    favouritebtn.CssClass = "likebtnafter";
+                }
             }
-            else
+            else if (null != Session["MemberMemberListID"] && favouritebtn.CssClass == "likebtnafter")
             {
-                
-                //favouritebtn.CssClass = "likebtnafter";
+                Util.ExecuteQuery("Update MemberFavouriteList Set RecordStatus = 0 Where MemberListID = " + Session["MemberMemberListID"].ToString() + " And AnimalListID = " + AnimalListIDRadLabel.Text);
+                favouritebtn.CssClass = "likebtnbefore";
+            }
+        }
+
+        protected void ResultsRadgrid_ItemDataBound(object sender, GridItemEventArgs e)
+        {
+            if (e.Item.ItemType == GridItemType.AlternatingItem || e.Item.ItemType == GridItemType.Item)
+            {
+                List<Favourite> favlist = new List<Favourite>();
+                SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+                conn.Open();
+                if (null != Session["MemberMemberListID"])
+                {
+                    SqlCommand cmd = new SqlCommand("Select MemberListID, AnimalListID, RecordStatus From MemberFavouriteList Where RecordStatus = 1 And MemberListID = " + Session["MemberMemberListID"].ToString(), conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Favourite fav = new Favourite(reader[0].ToString(), reader[1].ToString(), reader[2].ToString());
+                        favlist.Add(fav);//
+                    }
+                    reader.Close();
+                    //
+                    foreach (GridDataItem row in ResultsRadgrid.MasterTableView.Items)
+                    {
+                        RadLabel LikedAnimal = row.FindControl("AnimalListIDRadLabel") as RadLabel;
+                        foreach (Favourite fav in favlist)
+                        {
+                            if (LikedAnimal.Text == fav.AnimalListID)
+                            {
+                                Button LikeBtn = row.FindControl("LikeBtn") as Button;
+                                LikeBtn.CssClass = "likebtnafter";
+                            }
+                        }
+                    }
+                }
             }
         }
     }

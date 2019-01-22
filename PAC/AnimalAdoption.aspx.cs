@@ -14,13 +14,14 @@ namespace PAC
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            HideGridView();
+            RenderGridView();
             if (!IsPostBack)
             {
                 Session.Remove("CurrentAdoptionListID");
             }
         }
 
+        //this method control all web controls visibility
         private void ControlVisiblilty(bool vsb1, bool vsb2)
         {
             GridView gvQuestions = fvAnimalDetails.FindControl("gvQuestions") as GridView;
@@ -33,13 +34,25 @@ namespace PAC
             btnApply.Visible = vsb2;
         }
 
+        //Render all controls needed
+        private List<Control> RenderControlsList()
+        {
+            GridView gvQuestions = fvAnimalDetails.FindControl("gvQuestions") as GridView;
+
+            foreach (GridViewRow row in gvQuestions.Rows)
+            {
+                Control ctrl = row.Cells[2].Controls[0];
+                Util.controlList.Add(ctrl);
+            }
+            return Util.controlList;
+        }
+
         protected void BtnApply_Click(object sender, EventArgs e)
         {
             if (Session["MemberMemberListID"] != null)
             {
                 ControlVisiblilty(true, false);
-                lb.Text = "Apply Success...!";
-                ControlList();
+                RenderControlsList();
             }
             else
             {
@@ -56,15 +69,14 @@ namespace PAC
         
         protected void BtnComplete_Click(object sender, EventArgs e)
         {
-            //lb.Text = Session["AnimalListID"].ToString();
             InsertNewAdoption();
             InsertAllResponseValue();
-            Util.controlList.Clear();
+            Util.controlList.Clear();//using static List because we dont want to auto new List in page_load(), so we need manually clear the List item
             Session.Remove("CurrentAdoptionListID");
             Response.Redirect("/Members/ManageMyAccount.aspx");
         }
         
-
+        /*--------------------Start manually add web controls---------------------------*/
         private TextBox AddTextBox(int id)
         {
             TextBox txtqa = new TextBox
@@ -85,19 +97,9 @@ namespace PAC
             return chkqa;
         }
 
-        private string GetListSelectCommand(int questionListID)
+        private Control AddControlList(int id, string listType, int questionListID)
         {
-            string state = "";
-            return state = "SELECT QuestionItemList.QuestionItemText FROM QuestionItemList INNER JOIN QuestionList ON " +
-                "QuestionItemList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTemplateList ON " +
-                "QuestionList.QuestionTemplateListID = QuestionTemplateList.QuestionTemplateListID INNER JOIN QuestionTypeList ON " +
-                "QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE QuestionItemList.QuestionListID = " + questionListID;
-            
-        }
-
-        private Control AddList(int id, string listType, int questionListID)
-        {
-            SqlGetList.SelectCommand = GetListSelectCommand(questionListID);
+            SqlGetList.SelectCommand = GetQuestionItemListSelectCommand(questionListID);
             if (listType == "DropDownList")
             {
                 DropDownList ddlqa = new DropDownList
@@ -136,19 +138,65 @@ namespace PAC
             }
             return null;
         }
+        /*--------------End manually add web controls--------------------------*/
 
-        private List<Control> ControlList()
+        private string GetQuestionItemListSelectCommand(int questionListID)
         {
-            GridView gvQuestions = fvAnimalDetails.FindControl("gvQuestions") as GridView;
+            return "SELECT QuestionItemList.QuestionItemText FROM QuestionItemList INNER JOIN QuestionList ON " +
+                "QuestionItemList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTemplateList ON " +
+                "QuestionList.QuestionTemplateListID = QuestionTemplateList.QuestionTemplateListID INNER JOIN QuestionTypeList ON " +
+                "QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE QuestionItemList.QuestionListID = " + questionListID;
             
-            foreach (GridViewRow row in gvQuestions.Rows)
-            {
-                Control ctrl = row.Cells[2].Controls[0];
-                Util.controlList.Add(ctrl);
-            }
-            return Util.controlList;
         }
 
+        //get question id by using current row index
+        private int GetQuestionListID(int rowIndex)
+        {
+            GridView gv = fvAnimalDetails.FindControl("gvQuestions") as GridView;
+            int questionID = Convert.ToInt32(gv.DataKeys[rowIndex].Values[0]);
+            return questionID;
+        }
+
+        /*------------------start Get Parameter By reading sql command----------------------*/
+
+        private string GetQuestionType(string questionTypeListID)
+        {
+            string command = "SELECT QuestionType FROM QuestionTypeList WHERE QuestionTypeListID = " + questionTypeListID;
+            string questionType = "";
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(command, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    questionType = reader["QuestionType"].ToString();
+                }
+                conn.Close();
+            }
+            return questionType;
+        }
+
+        private string GetQuestionTypeListID(string questionListID)
+        {
+            string command = "SELECT QuestionTypeListID FROM QuestionList WHERE QuestionListID = " + questionListID;
+            string questionTypeListID = "";
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand(command, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    questionTypeListID = reader["QuestionTypeListID"].ToString();
+                }
+                conn.Close();
+            }
+            return questionTypeListID;
+        }
+        /*------------------End Get Parameter By reading sql command----------------------*/
+
+        //Start Insert Adoption Recode
         private void InsertNewAdoption()
         {
             string AdoptionListID = "";
@@ -163,40 +211,45 @@ namespace PAC
             Session["CurrentAdoptionListID"] = AdoptionListID;
         }
 
-        private int GetQuestionListID(int rowIndex)
+        //Insert new question response value recorde
+        private string InsertNewResponseValue(int questionid, string adoptionid, string controlvalue)
         {
-            GridView gv = fvAnimalDetails.FindControl("gvQuestions") as GridView;
-            int questionID = Convert.ToInt32(gv.DataKeys[rowIndex].Values[0]);
-            return questionID;
+            if (controlvalue == null)
+                return "INSERT INTO QuestionResponseList(QuestionListID, AdoptionListID, ResponseValue) VALUES(" + questionid + ", " + adoptionid + ", null)";
+            return "INSERT INTO QuestionResponseList(QuestionListID, AdoptionListID, ResponseValue) VALUES(" + questionid + ", " + adoptionid + ", '" + controlvalue + "')";
         }
 
+        //insert current row question response value
         private void InsertCurrentRowResponse(int RowIndex)
         {
             GridView gv = fvAnimalDetails.FindControl("gvQuestions") as GridView;
+
             string controlID = Util.controlList[RowIndex].ID;
+            
+
             if (Util.controlList[RowIndex] is DropDownList)
             {
                 DropDownList ddl = gv.Rows[RowIndex].FindControl(controlID) as DropDownList;
-                Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), ddl.SelectedValue));
+                Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), ddl.SelectedValue));
                 
             }
             else if (Util.controlList[RowIndex] is TextBox)
             {
                 TextBox txt = gv.Rows[RowIndex].FindControl(controlID) as TextBox;
-                Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), txt.Text));
+                Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), txt.Text));
             }
             else if (Util.controlList[RowIndex] is CheckBox)
             {
                 CheckBox chk = gv.Rows[RowIndex].FindControl(controlID) as CheckBox;
                 if (chk.Checked)
-                    Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), "YES"));
+                    Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), "YES"));
                 else
-                    Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), "NO"));
+                    Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), "NO"));
             }
             else if (Util.controlList[RowIndex] is RadioButtonList)
             {
                 RadioButtonList rbl = gv.Rows[RowIndex].FindControl(controlID) as RadioButtonList;
-                Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), rbl.SelectedItem.Value));
+                Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), rbl.SelectedItem.Value));
             }
             else if (Util.controlList[RowIndex] is CheckBoxList)
             {
@@ -204,14 +257,15 @@ namespace PAC
                 foreach (ListItem item in cbl.Items)
                 {
                     if (item.Selected)
-                        Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), item.Value));
+                        Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), item.Value));
                     else
-                        Util.ExecuteQuery(Util.InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), null));
+                        Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), null));
                 }
             }
             
         }
 
+        //for loop all gridview row and insert all question response value
         private void InsertAllResponseValue()
         {
             GridView gv = fvAnimalDetails.FindControl("gvQuestions") as GridView;
@@ -221,14 +275,19 @@ namespace PAC
             }
         }
 
-        private void HideGridView()
+        
+        //render question gridview but the visible is false because this is the first time post back on the page_load()
+        private void RenderGridView()
         {
             GridView gvQuestions = fvAnimalDetails.FindControl("gvQuestions") as GridView;
+            
             foreach (GridViewRow row in gvQuestions.Rows)
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {
-                    string answerType = Util.GetQuestionType(Util.GetQuestionTypeListID(gvQuestions.DataKeys[row.RowIndex].Values[0].ToString()));
+                    string questiontypeid = GetQuestionTypeListID(gvQuestions.DataKeys[row.RowIndex].Values[0].ToString());
+                    string questiontype = GetQuestionType(questiontypeid);
+                    string answerType = questiontype;
                     switch (answerType)
                     {
                         case "Textbox":
@@ -238,13 +297,13 @@ namespace PAC
                             gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddCheckBox(row.RowIndex));
                             break;
                         case "RadioButtonList":
-                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddList(row.RowIndex, "RadioButtonList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
+                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddControlList(row.RowIndex, "RadioButtonList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
                             break;
                         case "CheckBoxList":
-                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddList(row.RowIndex, "CheckBoxList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
+                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddControlList(row.RowIndex, "CheckBoxList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
                             break;
                         case "DropDownList":
-                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddList(row.RowIndex, "DropDownList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
+                            gvQuestions.Rows[row.RowIndex].Cells[2].Controls.Add(AddControlList(row.RowIndex, "DropDownList", Convert.ToInt32(gvQuestions.DataKeys[row.RowIndex].Values[0])));
                             break;
                         default:
                             break;

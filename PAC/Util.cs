@@ -14,10 +14,8 @@ namespace PAC
 {
     public class Util
     {
-
-        static List<int> indexList = new List<int>();
+        
         public static List<Control> controlList = new List<Control>();
-        public static int AcitveMeFlag = 0;
 
         public static void SendEmail(string email, string body)
         {
@@ -48,7 +46,25 @@ namespace PAC
             return guid;
         }
 
-        
+        public static string[] getColumnName(string tableName)
+        {
+            SqlConnection sqlConnection = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            sqlConnection.Open();
+            string query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'" + tableName + "'";
+            SqlCommand cmd = new SqlCommand(query, sqlConnection);
+
+            List<string> columnList = new List<string>();
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    columnList.Add(reader.GetString(0));
+                }
+                reader.Close();
+            }
+            sqlConnection.Close();
+            return columnList.ToArray();
+        }
 
         public static bool ExistEmail(string email, string table_name, string column_name)
         {
@@ -67,16 +83,6 @@ namespace PAC
             }
             conn.Close();
             return false;
-        }
-
-        public static bool RecordStatusActive(string email, string table_name, string column_name)
-        {
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand("Select RecordStatus From " + table_name + " Where " + column_name + " = '" + email + "'", conn);
-            SqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-            return (bool)reader[0];
         }
 
         public static bool ExistCompany(string command)
@@ -109,142 +115,6 @@ namespace PAC
             return dob;
         }
         
-        
-        public static string GetQuestionType(string questionTypeListID)
-        {
-            string command = "SELECT QuestionType FROM QuestionTypeList WHERE QuestionTypeListID = " + questionTypeListID;
-            string questionType = "";
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(command, conn);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    questionType = reader["QuestionType"].ToString();
-                }
-                conn.Close();
-            }
-            return questionType;
-        }
-
-        public static string GetQuestionTypeListID(string questionListID)
-        {
-            string command = "SELECT QuestionTypeListID FROM QuestionList WHERE QuestionListID = " + questionListID;
-            string questionTypeListID = "";
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(command, conn);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                if (reader.Read())
-                {
-                    questionTypeListID = reader["QuestionTypeListID"].ToString();
-                }
-                conn.Close();
-            }
-            return questionTypeListID;
-        }
-        
-        public static string GetQuestionTemplateListID(string animalListID)
-        {
-            string command = "SELECT QuestionTemplateListID FROM AnimalList WHERE AnimalListID = " + animalListID;
-            string questionTemplateListID = "";
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand cmd = new SqlCommand(command, conn);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    questionTemplateListID = reader["QuestionTemplateListID"].ToString();
-                }
-                conn.Close();
-            }
-            return questionTemplateListID;
-        }
-
-        public static string InsertNewResponseValue(int questionid, string adoptionid, string controlvalue)
-        {
-            if(controlvalue == null)
-                return "INSERT INTO QuestionResponseList(QuestionListID, AdoptionListID, ResponseValue) VALUES(" + questionid + ", " + adoptionid + ", null)";
-            return "INSERT INTO QuestionResponseList(QuestionListID, AdoptionListID, ResponseValue) VALUES(" + questionid + ", " + adoptionid + ", '" + controlvalue + "')";
-        }
-        
-
-        public static string GetResponseValueID(string questionid, string adoptionid)
-        {
-            string command = "select QuestionResponseListID from QuestionResponseList where QuestionListID = " + questionid + " And AdoptionListID = " + adoptionid;
-            string responseId = "";
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(command, conn);
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-            reader.Read();
-            responseId = reader[0].ToString();
-            conn.Close();
-            return responseId;
-        }
-
-        public static string GetResponseValue(string questionid, string adoptionid)
-        {
-            string command = "select responsevalue from QuestionResponseList where QuestionListID = " + questionid + " and AdoptionListID = " + adoptionid;
-            string responseValue = ""; SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(command, conn);
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-            reader.Read();
-            responseValue = reader[0].ToString();
-            conn.Close();
-            return responseValue;
-        }
-
-        public static void GetResponseValueList(string questionid, string adoptionid, List<string> responseValuelist)
-        {
-            string command = "select responsevalue from QuestionResponseList where QuestionListID = " + questionid + " and AdoptionListID = " + adoptionid;
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(command, conn);
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-            while (reader.Read())
-            {
-                if (reader.HasRows)
-                {
-                    responseValuelist.Add(reader[0].ToString());
-                }
-            }
-            reader.Close();
-            conn.Close();
-        }
-
-        public static string UpdateResponseValueCBLCommand(string value, string questionid, string adoptionid, List<string> responseidList, int idIndex)
-        {
-            if (value == null)
-                return "UPDATE QuestionResponseList SET ResponseValue = null WHERE QuestionResponseListID = " + GetResponseValueIDList(questionid, adoptionid, responseidList)[idIndex];
-            return "UPDATE QuestionResponseList SET ResponseValue = '" + value + "' WHERE QuestionResponseListID = " + GetResponseValueIDList(questionid, adoptionid, responseidList)[idIndex];
-        }
-
-        public static string UpdateResponseValueCommand(string value, string questionid, string adoptionid)
-        {
-            return "UPDATE QuestionResponseList SET ResponseValue = '" + value + "' WHERE QuestionResponseListID = " + GetResponseValueID(questionid, adoptionid);
-        }
-        
-        public static List<string> GetResponseValueIDList(string questionid, string adoptionid, List<string> responseidList)
-        {
-            string command = "select QuestionResponseListID from QuestionResponseList where QuestionListID = " + questionid + " and AdoptionListID = " + adoptionid;
-            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
-            conn.Open();
-            SqlCommand sqlCommand = new SqlCommand(command, conn);
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-            while (reader.Read())
-            {
-                if (reader.HasRows)
-                {
-                    responseidList.Add(reader[0].ToString());
-                }
-            }
-            return responseidList;
-        }
 
         public static void ExecuteQuery(string command)
         {
@@ -255,12 +125,5 @@ namespace PAC
             sqlConnection.Close();
         }
         
-        public static string GetQuestionItemListSelectCMD(string questionid)
-        {
-            return "SELECT QuestionItemList.QuestionItemText FROM QuestionItemList INNER JOIN QuestionList ON " +
-                "QuestionItemList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTemplateList ON " +
-                "QuestionList.QuestionTemplateListID = QuestionTemplateList.QuestionTemplateListID INNER JOIN QuestionTypeList ON " +
-                "QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE QuestionItemList.QuestionListID = " + questionid;
-        }
     }
 }
