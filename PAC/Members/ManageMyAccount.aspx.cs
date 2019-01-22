@@ -264,9 +264,12 @@ namespace PAC.Members
             conn.Open();
             SqlCommand sqlCommand = new SqlCommand(command, conn);
             SqlDataReader reader = sqlCommand.ExecuteReader();
-            reader.Read();
-            responseValue = reader[0].ToString();
-            conn.Close();
+            if (reader.Read())
+            {
+                responseValue = reader[0].ToString();
+                conn.Close();
+            }
+            
             return responseValue;
         }
 

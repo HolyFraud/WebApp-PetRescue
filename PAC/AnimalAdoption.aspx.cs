@@ -130,6 +130,7 @@ namespace PAC
                 {
                     ID = "rblqa" + id
                 };
+                
                 rblqa.DataSource = SqlGetList;
                 rblqa.DataTextField = "QuestionItemText";
                 rblqa.DataValueField = "QuestionItemText";
@@ -146,9 +147,10 @@ namespace PAC
                 "QuestionItemList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTemplateList ON " +
                 "QuestionList.QuestionTemplateListID = QuestionTemplateList.QuestionTemplateListID INNER JOIN QuestionTypeList ON " +
                 "QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE QuestionItemList.QuestionListID = " + questionListID;
-            
+
         }
 
+        
         //get question id by using current row index
         private int GetQuestionListID(int rowIndex)
         {
@@ -158,6 +160,18 @@ namespace PAC
         }
 
         /*------------------start Get Parameter By reading sql command----------------------*/
+        private bool RadioButtonListNotSelected(int questionid)
+        {
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["SQLConnectionString"].ConnectionString);
+            conn.Open();
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(QuestionItemList.QuestionItemText) FROM QuestionItemList INNER JOIN QuestionList ON QuestionItemList.QuestionListID = QuestionList.QuestionListID INNER JOIN QuestionTemplateList ON QuestionList.QuestionTemplateListID = QuestionTemplateList.QuestionTemplateListID INNER JOIN QuestionTypeList ON QuestionList.QuestionTypeListID = QuestionTypeList.QuestionTypeListID WHERE QuestionItemList.QuestionListID = " + questionid, conn);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                if (Convert.ToInt32(reader[0]) > 0) return false;
+            }
+            return true;
+        }
 
         private string GetQuestionType(string questionTypeListID)
         {
@@ -249,7 +263,14 @@ namespace PAC
             else if (Util.controlList[RowIndex] is RadioButtonList)
             {
                 RadioButtonList rbl = gv.Rows[RowIndex].FindControl(controlID) as RadioButtonList;
-                Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), rbl.SelectedItem.Value));
+                if (rbl.SelectedIndex == -1)
+                {
+                    string value = "";
+                    Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), value));
+                }
+                else
+                    Util.ExecuteQuery(InsertNewResponseValue(GetQuestionListID(RowIndex), Session["CurrentAdoptionListID"].ToString(), rbl.SelectedItem.Value));
+                
             }
             else if (Util.controlList[RowIndex] is CheckBoxList)
             {
