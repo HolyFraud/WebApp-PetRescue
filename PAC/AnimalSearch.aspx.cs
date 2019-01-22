@@ -21,7 +21,6 @@ namespace PAC
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
                 getSessionSelection();
@@ -460,6 +459,10 @@ namespace PAC
             {
                 Util.ExecuteQuery("Update MemberFavouriteList Set RecordStatus = 0 Where MemberListID = " + Session["MemberMemberListID"].ToString() + " And AnimalListID = " + AnimalListIDRadLabel.Text);
                 favouritebtn.CssClass = "likebtnbefore";
+            }
+            else
+            {
+                ScriptManager.RegisterClientScriptBlock((sender as Control), this.GetType(), "alert", "alert('Please Login First...!')", true);
             }
         }
 
